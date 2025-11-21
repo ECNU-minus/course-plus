@@ -11,7 +11,9 @@ export default withRouter(({ history }) => {
   useEffect(() => {
     const getLessonIndex = async () => {
       const response = (
-        await axios.get('/public/course-plus-data/lessonData_index.json')
+        await axios.get(
+          '/course-plus/public/course-plus-data/lessonData_index.json'
+        )
       ).data
       const lastIndex = response[response.length - 1]
       if (path) {

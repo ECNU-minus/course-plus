@@ -63,25 +63,28 @@ export function TimeLocation(props) {
 export function useLessonData(semester) {
   // return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
   return useSWR(
-    `/public/course-plus-data/LessonData/Parsed_${semester}.json`,
+    `/course-plus/public/course-plus-data/LessonData/Parsed_${semester}.json`,
     lessonFetcher
   )
 }
 
 export function useIndexData() {
-  return useSWR(`/public/course-plus-data/lessonData_index.json`, lessonFetcher)
+  return useSWR(
+    `/course-plus/public/course-plus-data/lessonData_index.json`,
+    lessonFetcher
+  )
 }
 
 export function useLessonDetail() {
   return useSWR(
-    `/public/course-plus-data/lesson_description_2020.json`,
+    `/course-plus/public/course-plus-data/lesson_description_2020.json`,
     fetcher
   )
 }
 
 export function useLessonConversion() {
   return useSWR(
-    `/public/course-plus-data/lesson_conversion.json`,
+    `/course-plus/public/course-plus-data/lesson_conversion.json`,
     conversionFetcher
   )
 }

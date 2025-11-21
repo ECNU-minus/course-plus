@@ -71,7 +71,9 @@ export default function ({ semester, selectedLessonObj }) {
   useEffect(() => {
     const getLessonIndex = async () => {
       const semesterIndex = (
-        await axios.get('/public/course-plus-data/lessonData_index.json')
+        await axios.get(
+          '/course-plus/public/course-plus-data/lessonData_index.json'
+        )
       ).data
       const index = find(
         semesterIndex,
