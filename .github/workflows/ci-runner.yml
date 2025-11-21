@@ -44,7 +44,7 @@ jobs:
           CI: true
 
       - name: Build
-        run: yarn build
+        run: yarn build && cp -r ./public/course-plus-data ./dist/public/course-plus-data
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
