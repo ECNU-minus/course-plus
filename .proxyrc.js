@@ -2,7 +2,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const serveStatic = require('serve-static')
 
 module.exports = function (app) {
-    app.use('/course-plus-data', serveStatic('public/course-plus-data'))
+    app.use('public/course-plus-data', serveStatic('public/course-plus-data'))
 
     let loggedIn = false
 

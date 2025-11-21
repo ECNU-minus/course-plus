@@ -63,21 +63,27 @@ export function TimeLocation(props) {
 export function useLessonData(semester) {
   // return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
   return useSWR(
-    `/course-plus-data/LessonData/Parsed_${semester}.json`,
+    `/public/course-plus-data/LessonData/Parsed_${semester}.json`,
     lessonFetcher
   )
 }
 
 export function useIndexData() {
-  return useSWR(`/course-plus-data/lessonData_index.json`, lessonFetcher)
+  return useSWR(`/public/course-plus-data/lessonData_index.json`, lessonFetcher)
 }
 
 export function useLessonDetail() {
-  return useSWR(`/course-plus-data/lesson_description_2020.json`, fetcher)
+  return useSWR(
+    `/public/course-plus-data/lesson_description_2020.json`,
+    fetcher
+  )
 }
 
 export function useLessonConversion() {
-  return useSWR(`/course-plus-data/lesson_conversion.json`, conversionFetcher)
+  return useSWR(
+    `/public/course-plus-data/lesson_conversion.json`,
+    conversionFetcher
+  )
 }
 
 export const dayName = [

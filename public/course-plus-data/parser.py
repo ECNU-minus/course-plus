@@ -185,24 +185,24 @@ def parse_single(lesson_data: dict[str, Any], aca_year: int, semester: str, idx:
         #"kklx": "一专",
         "skjc": extract_time(lesson_data)[0][0][1], # 节次
         #"xqh_id": "02",
-        "jxbmc": extract_class(lesson_data),
-        "xf": extract_credits(lesson_data),
-        "rwzxs": extract_periods(lesson_data),
-        "jxbzc": extract_class_comp(lesson_data),
-        "kcxzmc": extract_compulsory(lesson_data),
-        "xkbz": extract_remark(lesson_data),
+        "jxbmc": extract_class(lesson_data),    # 教学班名称
+        "xf": extract_credits(lesson_data),   # 学分
+        "rwzxs": extract_periods(lesson_data),  # 总学时
+        "jxbzc": extract_class_comp(lesson_data), # 教学班组成
+        "kcxzmc": extract_compulsory(lesson_data), # 选修 or 必修
+        "xkbz": extract_remark(lesson_data),    # 备注
         "cdjc": 114514, #看不懂
         #"cdqsjsz": "第1-4周",
         #"xnm": "2021",
-        "xn": f"{aca_year}-{aca_year + 1}",
+        "xn": f"{aca_year}-{aca_year + 1}", # 学年
         #"xqmc": extract_campus(lesson_data),
-        "jsxx": extract_teachers(lesson_data),
-        "xq": semester,
+        "jsxx": extract_teachers(lesson_data), # 教师
+        "xq": semester,     # 学期
         #"jc": 114514, # 看不懂
-        "nj": extract_grade(lesson_data),
-        "row_id": idx,
-        "kzmc": extract_gen_type(lesson_data),
-        "jxdd": extract_time_location(lesson_data),
+        "nj": extract_grade(lesson_data), # 年级
+        "row_id": idx,      # 行号
+        "kzmc": extract_gen_type(lesson_data),  # 通识类型
+        "jxdd": extract_time_location(lesson_data),  # 时间地点
     }
     return res
 
