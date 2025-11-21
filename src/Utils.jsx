@@ -1,3 +1,9 @@
+/*
+ * Copyright SJTU-Geek
+ * Modified by Niazye from ECNU-Minus in 2025
+ * Changes: File path changes since different project structure and module implementation
+ */
+
 import React, { useState } from 'react'
 import useSWR from 'swr'
 
@@ -55,7 +61,11 @@ export function TimeLocation(props) {
 }
 
 export function useLessonData(semester) {
-  return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
+  // return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
+  return useSWR(
+    `/course-plus-data/LessonData/Parsed_${semester}.json`,
+    lessonFetcher
+  )
 }
 
 export function useIndexData() {
