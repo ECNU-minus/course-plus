@@ -11,7 +11,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -44,7 +44,21 @@ jobs:
           CI: true
 
       - name: Build
-        run: yarn build && cp -r ./public/course-plus-data ./dist/public/course-plus-data
+        run: yarn build
+
+      - name: git config
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit gh-pages
+        run: |
+          cp -r public/course-plus-data dist/public/course-plus-data
+          cd dist
+          git init
+          git add .
+          git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新"
+          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
