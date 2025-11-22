@@ -177,25 +177,38 @@ function App() {
               <div className='row'>
                 <div className='col d-flex d-row align-items-center'>
                   <p className='text-muted my-1 small'>
-                    <a href='https://github.com/SJTU-Geek/course-plus'>
+                    <a href='https://github.com/ECNU-minus/course-plus'>
                       本项目
                     </a>{' '}
                     由{' '}
+                    <a
+                      href='https://minus.myecnu.org/'
+                      target='_blank'
+                      rel='noreferrer'
+                    >
+                      ecnu-minus
+                    </a>
+                    维护。
+                    <br />
+                    Fork 自{' '}
                     <a
                       href='https://geek.sjtu.edu.cn/'
                       target='_blank'
                       rel='noreferrer'
                     >
                       思源极客协会
+                    </a>{' '}
+                    的{' '}
+                    <a href='https://github.com/SJTU-Geek/course-plus'>
+                      Course-PLUS项目
                     </a>
-                    维护。
                   </p>
                 </div>
               </div>
               <div className='row justify-content-end'>
                 <div className='col-auto my-2 p-0 d-flex d-row align-items-center'>
                   <GitHubButton
-                    href='https://github.com/SJTU-Geek/course-plus'
+                    href='https://github.com/ECNU-minus/course-plus'
                     data-show-count
                     data-size='large'
                   >
