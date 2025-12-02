@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by ChiyoYuki from ECNU-minus on 2025-12-03
+ * Changes:
+ * - fix: remove outdated fixtures
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import 'moment/locale/zh-cn'
 
 import axios from 'axios'
@@ -18,51 +31,51 @@ function downloadFile(filename, data, mediaType) {
   link.click()
 }
 
-const allFixtures = [
-  {
-    name: '2020 新生教学安排',
-    rules: [
-      { week: 1, day: 1, on: null },
-      { week: 1, day: 2, on: null },
-      { week: 1, day: 3, on: moment('2020-09-19', 'YYYY-MM-DD') },
-      { week: 1, day: 4, on: moment('2020-10-17', 'YYYY-MM-DD') },
-      { week: 1, day: 5, on: moment('2020-10-24', 'YYYY-MM-DD') },
-    ],
-  },
-  {
-    name: '2020 国庆节',
-    rules: [
-      { week: 4, day: 4, on: null },
-      { week: 4, day: 5, on: null },
-      { week: 5, day: 1, on: moment('2020-10-10', 'YYYY-MM-DD') },
-      { week: 5, day: 2, on: moment('2020-09-27', 'YYYY-MM-DD') },
-      { week: 5, day: 3, on: null },
-      { week: 5, day: 4, on: null },
-    ],
-  },
-  {
-    name: '2021 春季学期 (清明节+劳动节+端午节)',
-    rules: [
-      { week: 7, day: 1, on: null },
-      { week: 11, day: 2, on: moment('2021-04-25', 'YYYY-MM-DD') },
-      { week: 11, day: 1, on: moment('2021-05-08', 'YYYY-MM-DD') },
-      { week: 11, day: 3, on: null },
-      { week: 17, day: 1, on: null },
-    ],
-  },
-  {
-    name: '2021 中秋+国庆',
-    rules: [
-      { week: 2, day: 1, on: moment('2021-09-18', 'YYYY-MM-DD') },
-      { week: 2, day: 2, on: null },
-      { week: 4, day: 2, on: moment('2021-09-26', 'YYYY-MM-DD') },
-      { week: 4, day: 4, on: moment('2021-10-09', 'YYYY-MM-DD') },
-      { week: 3, day: 5, on: null },
-      { week: 4, day: 1, on: null },
-      { week: 4, day: 3, on: null },
-    ],
-  },
-]
+// const allFixtures = [
+//   {
+//     name: '2020 新生教学安排',
+//     rules: [
+//       { week: 1, day: 1, on: null },
+//       { week: 1, day: 2, on: null },
+//       { week: 1, day: 3, on: moment('2020-09-19', 'YYYY-MM-DD') },
+//       { week: 1, day: 4, on: moment('2020-10-17', 'YYYY-MM-DD') },
+//       { week: 1, day: 5, on: moment('2020-10-24', 'YYYY-MM-DD') },
+//     ],
+//   },
+//   {
+//     name: '2020 国庆节',
+//     rules: [
+//       { week: 4, day: 4, on: null },
+//       { week: 4, day: 5, on: null },
+//       { week: 5, day: 1, on: moment('2020-10-10', 'YYYY-MM-DD') },
+//       { week: 5, day: 2, on: moment('2020-09-27', 'YYYY-MM-DD') },
+//       { week: 5, day: 3, on: null },
+//       { week: 5, day: 4, on: null },
+//     ],
+//   },
+//   {
+//     name: '2021 春季学期 (清明节+劳动节+端午节)',
+//     rules: [
+//       { week: 7, day: 1, on: null },
+//       { week: 11, day: 2, on: moment('2021-04-25', 'YYYY-MM-DD') },
+//       { week: 11, day: 1, on: moment('2021-05-08', 'YYYY-MM-DD') },
+//       { week: 11, day: 3, on: null },
+//       { week: 17, day: 1, on: null },
+//     ],
+//   },
+//   {
+//     name: '2021 中秋+国庆',
+//     rules: [
+//       { week: 2, day: 1, on: moment('2021-09-18', 'YYYY-MM-DD') },
+//       { week: 2, day: 2, on: null },
+//       { week: 4, day: 2, on: moment('2021-09-26', 'YYYY-MM-DD') },
+//       { week: 4, day: 4, on: moment('2021-10-09', 'YYYY-MM-DD') },
+//       { week: 3, day: 5, on: null },
+//       { week: 4, day: 1, on: null },
+//       { week: 4, day: 3, on: null },
+//     ],
+//   },
+// ]
 
 export default function ({ semester, selectedLessonObj }) {
   const [firstDayDate, setFirstDayDate] = useState('')
@@ -83,14 +96,14 @@ export default function ({ semester, selectedLessonObj }) {
     getLessonIndex().then()
   }, [semester])
 
-  const getFixtures = () => {
-    let result = []
-    const selectedFixtures = allFixtures.filter((x) => fixtures.has(x.name))
-    selectedFixtures.forEach((x) => {
-      result = concat(result, x.rules)
-    })
-    return result
-  }
+  // const getFixtures = () => {
+  //   let result = []
+  //   const selectedFixtures = allFixtures.filter((x) => fixtures.has(x.name))
+  //   selectedFixtures.forEach((x) => {
+  //     result = concat(result, x.rules)
+  //   })
+  //   return result
+  // }
 
   const downloadAsICS = () => {
     downloadFile(
@@ -98,8 +111,8 @@ export default function ({ semester, selectedLessonObj }) {
       generateICS(
         selectedLessonObj,
         moment(firstDayDate),
-        semester,
-        getFixtures()
+        semester
+        // getFixtures()
       ),
       'text/calendar'
     )
@@ -127,7 +140,7 @@ export default function ({ semester, selectedLessonObj }) {
           onChange={(e) => setFirstDayDate(e.target.value)}
         />
       </Form.Group>
-      <div className='col-12 mb-1'>
+      {/* <div className='col-12 mb-1'>
         {allFixtures.map((key) => (
           <Form.Check type='checkbox' key={key.name} id={key.name} custom>
             <Form.Check.Input
@@ -154,7 +167,7 @@ export default function ({ semester, selectedLessonObj }) {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
       <div className='col-12 mb-1'>
         <button
           type='button'
