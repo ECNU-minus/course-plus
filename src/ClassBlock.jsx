@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Changes:
+ * - feat: change weekday dots
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import chunk from 'lodash/chunk'
 import flatMap from 'lodash/flatMap'
 import keys from 'lodash/keys'

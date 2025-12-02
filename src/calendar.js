@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Changes:
+ * - fix: time table
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import { createEvents } from 'ics'
 import moment from 'moment'
 
