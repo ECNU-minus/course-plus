@@ -53,7 +53,7 @@ jobs:
 
       - name: Commit gh-pages
         run: |
-          cp -r public/course-plus-data dist/public/course-plus-data
+          cp -r public/course-plus-data dist/course-plus-data
           cd dist
           touch CNAME
           echo "plus.myecnu.org" >> CNAME
