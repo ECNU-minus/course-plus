@@ -405,7 +405,7 @@ def main() -> None:
         if filename.startswith('Example'):
             continue
         aca_year = int(filename.split('_')[0])
-        if 'Fall' in filename:
+        if 'Autumn' in filename:
             semester = '1'
         elif 'Spring' in filename:
             semester = '2'
