@@ -342,7 +342,7 @@ def parse_single(lesson_data: dict[str, Any], aca_year: int, semester: str, idx:
             "sksj": sksj,
             "kcmc": extract_name(lesson_data),
             "skjc": "",
-            "jxbmc": extract_class(lesson_data),
+            "jxbmc": f"({aca_year}-{aca_year + 1}-{semester})-{extract_class(lesson_data)}",
             "xf": extract_credits(lesson_data),
             "rwzxs": extract_periods(lesson_data),
             "jxbzc": extract_class_comp(lesson_data),
@@ -379,7 +379,7 @@ def parse_single(lesson_data: dict[str, Any], aca_year: int, semester: str, idx:
             "sksj": sksj, # Keep full string for display
             "kcmc": extract_name(lesson_data),
             "skjc": period_str,
-            "jxbmc": extract_class(lesson_data),
+            "jxbmc": f"({aca_year}-{aca_year + 1}-{semester})-{extract_class(lesson_data)}",
             "xf": extract_credits(lesson_data),
             "rwzxs": extract_periods(lesson_data),
             "jxbzc": extract_class_comp(lesson_data),
