@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import math
+import time
 from loguru import logger
 from typing import Any
 
@@ -11,8 +12,8 @@ from typing import Any
 需要手动选择相应学期进行一次查询，在 浏览器 -> Developer tools -> Internet 中接受一次流量，
 找到 Payload 中的 semesterAssocs 字段，即可获得该学期对应的数字标识。
 '''
-SEMESTER: str = '2025_fall'
-SEMESTER_ID: str = '1377'
+SEMESTER: str = '2026_Spring'
+SEMESTER_ID: str = '1629'
 
 def find_base_path() -> str:
     current_path = os.path.abspath(__file__)
@@ -38,7 +39,7 @@ def get(page_num: int = 1, page_size: int = 20, semester_id: str = SEMESTER_ID) 
             'assembleFields': []
     }
     cookie = {
-        'SESSION': 'afe18f23-be0a-4b92-a7de-8a0ec7c6cebd',
+        'SESSION': '9750a438-52a2-405e-beb2-b3b2b4c38719',
     }
     response = requests.get(url, cookies=cookie, params=paras)
 
@@ -49,6 +50,28 @@ def get(page_num: int = 1, page_size: int = 20, semester_id: str = SEMESTER_ID) 
         exit(1)
 
     return response.json()
+
+def update_lessonData_index() -> None:
+    index_path = os.path.join(base_path, 'lessonData_index.json')
+    with open(index_path, 'r', encoding='utf-8') as f:
+        index_data: list[dict[str, str]] = json.load(f)
+    
+    for item in index_data:
+        if item['semester'] == SEMESTER:
+            logger.info(f'lessonData_index.json 已包含 {SEMESTER} 学期的信息，无需更新')
+            return
+    new_entry = {
+        'year': SEMESTER.split('_')[0],
+        'semester': SEMESTER.split('_')[1],
+        'updated_at': time.strftime('%Y-%m-%d', time.localtime()),
+        'first_day': '1970-01-01'
+    }
+    index_data.append(new_entry)
+
+    with open(index_path, 'w', encoding='utf-8') as f:
+        json.dump(index_data, f, ensure_ascii=False, indent=4)
+    
+    logger.info(f'已向 lessonData_index.json 添加 {SEMESTER} 学期的信息，请手动补充 updated_at 和 first_day 字段')
 
 def main() -> None:
     logger.info(f'当前任务：{SEMESTER} 学期（{SEMESTER_ID}）')
@@ -74,11 +97,14 @@ def main() -> None:
     if not os.path.exists(os.path.join(base_path, 'LessonData')):
         os.makedirs(os.path.join(base_path, 'LessonData'))
 
-    with open(os.path.join(base_path, 'LessonData', f'2025_Fall.json'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(base_path, 'LessonData', f'{SEMESTER}.json'), 'w', encoding='utf-8') as f:
             json.dump(lesson_data, f, ensure_ascii=False, indent=4)
     
     assert total_count == len(lesson_data)
-    logger.info(f'全部数据获取完成，已保存至 LessonData/2025_Fall.json，共 {len(lesson_data)} 条记录')
+    logger.info(f'全部数据获取完成，已保存至 LessonData/{SEMESTER}.json，共 {len(lesson_data)} 条记录')
+
+    update_lessonData_index()
+    
 
 if __name__ == '__main__':
     main()
