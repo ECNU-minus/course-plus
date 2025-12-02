@@ -3,7 +3,7 @@
  * Copyright 2020-2025 SJTU-Plus
  *
  * ----------------------------------------------------------------
- * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-03
  * Changes:
  * - feat: change weekday dots
  *
@@ -55,7 +55,8 @@ export default ({
   selectedLesson,
 }) => {
   const weekDots = []
-  const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
+  // const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
+  const maxWeek = 18
   const conflictLesson = []
   const showLesson = {}
   let showDots = false
