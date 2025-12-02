@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-03
+ * Changes:
+ * - feat: update info
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import './App.scss'
 
 import axios from 'axios'
@@ -169,24 +182,29 @@ function App() {
               </Switch>
 
               <p className='text-muted my-3 small'>
-                免责声明：本网站课程相关数据来自上海交通大学教学信息服务网。具体开课情况以教务网为准。
-              </p>
-              <p className='text-muted my-3 small'>
-                隐私政策：访问本网站，即代表您同意本网站使用“站长统计”收集您的访问信息。根据相关法律法规，本站不对欧盟用户提供服务。
+                免责声明：本网站课程相关数据来自
+                <a
+                  href='https://byyt.ecnu.edu.cn/home/#/home'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  华东师范大学教育教学管理平台
+                </a>
+                ，数据更新存在一定延迟性。具体开课情况以本科生院安排为准。
               </p>
               <div className='row'>
                 <div className='col d-flex d-row align-items-center'>
                   <p className='text-muted my-1 small'>
-                    <a href='https://github.com/SJTU-Geek/course-plus'>
+                    <a href='https://github.com/ECNU-minus/course-plus'>
                       本项目
                     </a>{' '}
                     由{' '}
                     <a
-                      href='https://geek.sjtu.edu.cn/'
+                      href='https://github.com/ECNU-minus'
                       target='_blank'
                       rel='noreferrer'
                     >
-                      思源极客协会
+                      ECNU-Minus
                     </a>
                     维护。
                   </p>
@@ -195,7 +213,7 @@ function App() {
               <div className='row justify-content-end'>
                 <div className='col-auto my-2 p-0 d-flex d-row align-items-center'>
                   <GitHubButton
-                    href='https://github.com/SJTU-Geek/course-plus'
+                    href='https://github.com/ECNU-minus/course-plus'
                     data-show-count
                     data-size='large'
                   >
