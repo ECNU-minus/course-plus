@@ -89,6 +89,14 @@ export default ({
 
         <button
           type='button'
+          className='btn btn-sm btn-outline-primary ml-2'
+          onClick={() => setState(new Set(starLessonObj.map((l) => l.jxbmc)))}
+        >
+          全部选中
+        </button>
+
+        <button
+          type='button'
           className='btn btn-sm btn-outline-primary'
           onClick={() => setState(new Set())}
         >
