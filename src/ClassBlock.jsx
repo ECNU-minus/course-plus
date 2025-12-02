@@ -47,7 +47,7 @@ export default ({
   const showLesson = {}
   let showDots = false
   const maxDay = max(map(selectedLesson, 'xqj')) || 0
-  const splitArray = maxDay <= 5 ? [8, 8, 16] : [4, 4, 8]
+  const splitArray = maxDay <= 5 ? [9, 9, 18] : [4, 4, 9]
 
   for (let week = 0; week < maxWeek; week++) {
     let dot = ''
