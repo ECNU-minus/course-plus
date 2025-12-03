@@ -1,0 +1,51 @@
+name: only update data
+
+on:
+  push:
+    branches:
+      - data
+  pull_request:
+    branches:
+      - data
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: remove old data
+        run: rm -rf course-plus-data
+
+      - name: Checkout data into dist/course-plus-data
+        uses: actions/checkout@v4
+        with:
+          ref: data
+          path: course-plus-data
+
+      - name: git config
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit gh-pages
+        run: |
+          rm -rf course-plus-data/.git course-plus-data/.github
+          rm -rf .git
+          rm course-plus-data/fetcher.py course-plus-data/parser.py
+          git init
+          git add .
+          git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新"
+          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
