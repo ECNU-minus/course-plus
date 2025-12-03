@@ -2,9 +2,53 @@
 
 ECNU 学期开课表索引与排课。
 
-Fork 自[SJTU-Geek/course-plus](https://github.com/SJTU-Geek/course-plus)，以下为原仓库`README.md`文件。
+## 本地运行
 
+1. clone 本仓库
+
+    ```shell
+    git clone https://github.com/ECNU-minus/course-plus.git
+    ```
+
+2. 获取数据
+
+    ```shell
+    rm -r public/course-plus-data
+    mkdir public/course-plus-data
+
+    git checkout data -- \
+    college_id.json \
+    lessonData_index.json \
+    lesson_conversion.json \
+    LessonData
+
+    mv college_id.json \
+    lessonData_index.json \
+    lesson_conversion.json \
+    LessonData \
+    public/course-plus-data
+
+    git add .
+    ```
+
+3. 安装依赖
+
+    ```
+    yarn
+    ```
+
+4. 运行
+
+    ```
+    yarn start
+    ```
+
+5. 访问[localhost:1234](localhost:1234)
+
+Fork 自[SJTU-Geek/course-plus](https://github.com/SJTU-Geek/course-plus)，
 在此对 [SJTU-Plus](https://github.com/SJTU-Plus) 与 [SJTU-Geek](https://github.com/SJTU-Geek) 表示感谢。
+
+以下为原仓库`README.md`文件。
 
 > # course-plus
 >

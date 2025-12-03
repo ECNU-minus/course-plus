@@ -25,3 +25,10 @@ yarn-error.log*
 dist
 .cache
 .parcel-cache
+
+# data
+public/course-plus-data
+college_id.json
+lessonData_index.json
+lesson_conversion.json
+/LessonData
