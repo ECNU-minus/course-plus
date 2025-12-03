@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Changes:
+ * - feat: hide classtable page
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import React from 'react'
 import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
 
@@ -32,7 +45,7 @@ export default () => {
   const links = [
     { path: '/browse', text: '搜索', match: '/:semester/browse' },
     { path: '/plan', text: '排课', match: '/:semester/plan' },
-    { path: '/classtable', text: '课表', match: '/:semester/classtable' },
+    // { path: '/classtable', text: '课表', match: '/:semester/classtable' },
   ]
   const match_links = links.map((link) => ({
     path: link.path,
