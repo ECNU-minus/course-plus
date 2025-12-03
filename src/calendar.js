@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Changes:
+ * - fix: time table
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import { createEvents } from 'ics'
 import moment from 'moment'
 
@@ -5,19 +18,19 @@ import { parseBin, parseTimeLocationDay } from './Utils'
 
 const timeAt = [
   '8:00',
-  '8:55',
-  '10:00',
-  '10:55',
-  '12:00',
-  '12:55',
-  '14:00',
-  '14:55',
-  '16:00',
-  '16:55',
+  '8:50',
+  '9:50',
+  '10:40',
+  '11:30',
+  '13:00',
+  '13:50',
+  '14:50',
+  '15:40',
+  '16:30',
   '18:00',
-  '18:55',
-  '19:35',
-  '20:15',
+  '18:50',
+  '19:40',
+  '20:30',
 ].map((x) => {
   const [hour, minute] = x.split(':')
   return parseInt(hour) * 60 + parseInt(minute)
