@@ -66,7 +66,8 @@ jobs:
       - name: Commit gh-pages
         run: |
           cd dist
-          rm -rf course-plus-data/.git
+          rm -rf course-plus-data/.git course-plus-data/.github
+          rm course-plus-data/fetcher.py course-plus-data/parser.py
           touch CNAME
           echo "plus.myecnu.org" >> CNAME
           git init

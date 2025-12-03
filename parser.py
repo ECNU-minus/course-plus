@@ -18,10 +18,10 @@ def find_base_path() -> str:
     current_path = os.path.abspath(__file__)
     while True:
         parent_path = os.path.dirname(current_path)
-        if os.path.basename(parent_path) == 'course-plus-data':
+        if os.path.basename(parent_path) == 'course-plus':
             return parent_path
         if parent_path == current_path:
-            raise Exception("Base path 'course-plus-data' not found.")
+            raise Exception("Base path 'course-plus' not found.")
         current_path = parent_path
 
 BASE_PATH = find_base_path()
