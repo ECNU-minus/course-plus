@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-02
+ * Changes:
+ * - feat: add select all button on plan page
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import sortBy from 'lodash/sortBy'
 import sumBy from 'lodash/sumBy'
 import uniqBy from 'lodash/uniqBy'
@@ -86,6 +99,14 @@ export default ({
             ))}
           </div>
         </Form.Row>
+
+        <button
+          type='button'
+          className='btn btn-sm btn-outline-primary ml-2'
+          onClick={() => setState(new Set(starLessonObj.map((l) => l.jxbmc)))}
+        >
+          全部选中
+        </button>
 
         <button
           type='button'
