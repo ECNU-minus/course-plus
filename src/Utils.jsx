@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye from ECNU-minus on 2025-11-21
+ * Changes:
+ * - feat: browse and star
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import React, { useState } from 'react'
 import useSWR from 'swr'
 
@@ -55,7 +68,11 @@ export function TimeLocation(props) {
 }
 
 export function useLessonData(semester) {
-  return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
+  // return useSWR(`/course-plus-data/lessonData_${semester}.json`, lessonFetcher)
+  return useSWR(
+    `/course-plus-data/LessonData/Parsed_${semester}.json`,
+    lessonFetcher
+  )
 }
 
 export function useIndexData() {
