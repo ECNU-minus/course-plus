@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by ChiyoYuki from ECNU-minus on 2025-12-03
+ * Changes:
+ * - fix: wrong text
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import countBy from 'lodash/countBy'
 import filter from 'lodash/filter'
 import flatMap from 'lodash/flatMap'
@@ -56,7 +69,7 @@ export default withRouter(({ history, state, setState }) => {
       <div>
         <Form.Row>
           <Form.Group className='col mb-3'>
-            <Form.Label>课程名称/新旧课程号</Form.Label>
+            <Form.Label>课程名称/（新）课程代码</Form.Label>
             <InputGroup>
               <Form.Control
                 placeholder='不限'
