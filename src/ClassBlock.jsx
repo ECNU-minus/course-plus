@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye and ChiyoYuki from ECNU-minus on 2025-12-03
+ * Changes:
+ * - feat: change weekday dots
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import chunk from 'lodash/chunk'
 import flatMap from 'lodash/flatMap'
 import keys from 'lodash/keys'
@@ -42,12 +55,13 @@ export default ({
   selectedLesson,
 }) => {
   const weekDots = []
-  const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
+  // const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
+  const maxWeek = 18
   const conflictLesson = []
   const showLesson = {}
   let showDots = false
   const maxDay = max(map(selectedLesson, 'xqj')) || 0
-  const splitArray = maxDay <= 5 ? [8, 8, 16] : [4, 4, 8]
+  const splitArray = maxDay <= 5 ? [9, 9, 18] : [4, 4, 9]
 
   for (let week = 0; week < maxWeek; week++) {
     let dot = ''
