@@ -174,7 +174,7 @@ export default function ({ semester, selectedLessonObj }) {
           className='btn btn-sm btn-outline-primary'
           onClick={downloadAsICS}
         >
-          导出到 iCalendar
+          导出课表
         </button>
       </div>
     </Form.Row>

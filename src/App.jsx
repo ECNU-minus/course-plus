@@ -84,6 +84,17 @@ function App() {
     setSelectedLesson(set2)
   }
 
+  const batchRemoveStarLessons = (values) => {
+    const set = new Set(starLesson)
+    const set2 = new Set(selectedLesson)
+    values.forEach((v) => {
+      set.delete(v)
+      set2.delete(v)
+    })
+    setStarLesson(set)
+    setSelectedLesson(set2)
+  }
+
   const syncFromISJTU = (semester) => {
     setSjtuLessonLoading(true)
     axios
@@ -164,6 +175,7 @@ function App() {
                   <PlanForm
                     starLesson={starLesson}
                     removeStarLesson={removeStarLesson}
+                    batchRemoveStarLessons={batchRemoveStarLessons}
                     state={selectedLesson}
                     setState={setSelectedLesson}
                     colorMapping={colorize(starLesson)}
