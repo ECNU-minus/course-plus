@@ -187,21 +187,30 @@ def calculate_zcd(weeks_str: str) -> int:
     parts = weeks_str.replace('周', '').split(',')
     
     for part in parts:
-        # Handle modifiers like (单) or (双) - currently ignoring them for simplicity
-        # or treating them as full range. A more complex logic is needed for parity.
-        # For now, let's strip modifiers to get the range numbers.
+        # Handle modifiers like (单) or (双)
+        is_odd = '(单)' in part
+        is_even = '(双)' in part
+
         clean_part = re.sub(r'\(.*?\)', '', part)
         
         if '-' in clean_part:
             try:
                 start, end = map(int, clean_part.split('-'))
                 for i in range(start, end + 1):
+                    if is_odd and i % 2 == 0:
+                        continue
+                    if is_even and i % 2 != 0:
+                        continue
                     zcd |= (1 << (i - 1))
             except ValueError:
                 pass # Handle cases where parsing fails
         else:
             try:
                 week = int(clean_part)
+                if is_odd and week % 2 == 0:
+                    continue
+                if is_even and week % 2 != 0:
+                    continue
                 zcd |= (1 << (week - 1))
             except ValueError:
                 pass
@@ -350,4 +359,4 @@ def main(year: str, semester: str) -> None:
                 json.dump(parsed_data_list, fout, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    main('2025', 'Autumn')
+    main('2026', 'Spring')
