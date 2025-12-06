@@ -169,8 +169,9 @@ def extract_grade(lesson_data: dict[str, Any]) -> str:
     return ','.join(res) if res else '无年级'
 
 def extract_gen_type(lesson_data: dict[str, Any]) -> str:
+        
         if lesson_data['courseProperty']:
-            return lesson_data['courseType']['nameZh'] if ('通识' in lesson_data['courseProperty']['nameZh']) else ''
+            return (lesson_data.get('courseType') or {}).get('nameZh', '') if ('通识' in lesson_data['courseProperty']['nameZh']) else ''
         return ''
 
 def calculate_zcd(weeks_str: str) -> int:
