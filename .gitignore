@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/.venv
 
 # testing
 /coverage
@@ -25,6 +26,7 @@ yarn-error.log*
 dist
 .cache
 .parcel-cache
+__pycache__
 
 # data
 public/course-plus-data
