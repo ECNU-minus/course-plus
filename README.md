@@ -8,6 +8,7 @@ ECNU 学期开课表索引与排课。
 
     ```shell
     git clone https://github.com/ECNU-minus/course-plus.git
+    cd course-plus
     ```
 
 2. 获取数据
@@ -43,7 +44,7 @@ ECNU 学期开课表索引与排课。
     yarn start
     ```
 
-5. 访问[localhost:1234](localhost:1234)
+5. 访问 [localhost:1234](localhost:1234)
 
 Fork 自[SJTU-Geek/course-plus](https://github.com/SJTU-Geek/course-plus)，
 在此对 [SJTU-Plus](https://github.com/SJTU-Plus) 与 [SJTU-Geek](https://github.com/SJTU-Geek) 表示感谢。
