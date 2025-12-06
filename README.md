@@ -12,12 +12,13 @@ ECNU 学期开课表索引与排课。
     ```
 
 2. 环境配置
-    Linux
-    >在 shell 中调用`./run.sh`
 
-    Windows
-    >在 cmd 中调用`.\run.bat` 或 `run.bat`
-    >或在 powershell 中调用 `./run.bat` 或 `.\run.bat`
+    - Linux
+      >在 shell 中调用`./run.sh`
+
+    - Windows
+      >在 cmd 中调用`.\run.bat` 或 `run.bat`
+      >或在 powershell 中调用 `./run.bat` 或 `.\run.bat`
 
 3. 运行
 
