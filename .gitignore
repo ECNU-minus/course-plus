@@ -29,6 +29,7 @@ dist
 .parcel-cache
 /public
 
-# DO NOT CHANGE THESE!!!
-LessonData/2*
-LessonData/Example.json
+
+LessonData/*
+!LessonData/Example.json
+!LessonData/Parsed_*
