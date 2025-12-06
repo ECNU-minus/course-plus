@@ -11,40 +11,21 @@ ECNU 学期开课表索引与排课。
     cd course-plus
     ```
 
-2. 获取数据
+2. 环境配置
+    Linux
+    >在 shell 中调用`./run.sh`
 
-    ```shell
-    rm -r public/course-plus-data
-    mkdir public/course-plus-data
+    Windows
+    >在 cmd 中调用`.\run.bat` 或 `run.bat`
+    >或在 powershell 中调用 `./run.bat` 或 `.\run.bat`
 
-    git checkout data -- \
-    college_id.json \
-    lessonData_index.json \
-    lesson_conversion.json \
-    LessonData
-
-    mv college_id.json \
-    lessonData_index.json \
-    lesson_conversion.json \
-    LessonData \
-    public/course-plus-data
-
-    git add .
-    ```
-
-3. 安装依赖
-
-    ```
-    yarn
-    ```
-
-4. 运行
+3. 运行
 
     ```
     yarn start
     ```
 
-5. 访问 [localhost:1234](localhost:1234)
+4. 访问 [localhost:1234](localhost:1234)
 
 Fork 自[SJTU-Geek/course-plus](https://github.com/SJTU-Geek/course-plus)，
 在此对 [SJTU-Plus](https://github.com/SJTU-Plus) 与 [SJTU-Geek](https://github.com/SJTU-Geek) 表示感谢。
