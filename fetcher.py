@@ -60,6 +60,7 @@ def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_s
         if item['semester'] == semester and item['year'] == aca_year:
             item['updated_at'] = time.strftime('%Y-%m-%d', time.localtime())
             item['first_day'] = first_day
+            item['updated_time'] = time.strftime('%H:%M', time.localtime())
             already_exists = True
             break
     if not already_exists:
@@ -67,7 +68,8 @@ def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_s
             'year': aca_year,
             'semester': semester,
             'updated_at': time.strftime('%Y-%m-%d', time.localtime()),
-            'first_day': first_day
+            'first_day': first_day,
+            'updated_time': time.strftime('%H:%M', time.localtime())
         }
         index_data.append(new_entry)
 
