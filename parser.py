@@ -149,7 +149,7 @@ def extract_class_comp(lesson_data: dict[str, Any]) -> str:
     return lesson_data['nameZh']
 
 def extract_compulsory(lesson_data: dict[str, Any]) -> str:
-    return ','.join(lesson_data['compulsorys'])
+    return ','.join(lesson_data['compulsorys']) or 'UNKNOWN'
 
 def extract_remark(lesson_data: dict[str, Any]) -> str:
     return lesson_data['remark']
