@@ -111,8 +111,8 @@ export default function ({ semester, selectedLessonObj }) {
       generateICS(
         selectedLessonObj,
         moment(firstDayDate),
-        semester
-        // getFixtures()
+        semester,
+        [] // 传入空数组作为 fixtures 参数，原本的fixture需要手动添加，维护不便，直接舍弃
       ),
       'text/calendar'
     )
