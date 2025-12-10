@@ -84,16 +84,38 @@ def calc_aca_year(year: str, seme: str | int) -> str:
     else:
         return f"{int(year) - 1}-{year}"
 
-def main() -> None:
+def argument_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Fetch course data from ECNU Course Plus')
-    parser.add_argument('--year', '-y', type = str, help = '学期所处年份（非学年），如 2026')
-    parser.add_argument('--seme', '-s', type = str, help = '具体学期，如 spring', choices= ['spring', 'summer', 'autumn'])
-    parser.add_argument('--seme-id', '-i', type = str, help = '学期 ID，如 1629')
-    parser.add_argument('--session', '-c', type = str, help = 'Session ID，如 9750a438-52a2-405e-beb2-b3b2b4c38719')
-    parser.add_argument('--first-day', '-f', type = str, help = '学期第一天日期，格式 YYYY-MM-DD')
-    parser.add_argument('--parser', '-p', action = "store_true", help = '是否解析数据（默认不解析）')
+    parser.add_argument('--year', '-y', type=str, help='学期所处年份（非学年），如 2026')
+    parser.add_argument('--seme', '-s', type=str, help='具体学期，如 spring', choices=['spring', 'summer', 'autumn'])
+    parser.add_argument('--seme-id', '-i', type=str, help='学期 ID，如 1629')
+    parser.add_argument('--session', '-c', type=str, help='Session ID，如 9750a438-52a2-405e-beb2-b3b2b4c38719')
+    parser.add_argument('--first-day', '-f', type=str, help='学期第一天日期，格式 YYYY-MM-DD')
+    parser.add_argument('--parser', '-p', action="store_true", help='是否解析数据（默认不解析）')
 
     args = parser.parse_args()
+    if not args.year:
+        logger.info("没有识别到年份信息，请输入：")
+        args.year = input().strip()
+    if not args.seme:
+        logger.info("没有识别到学期信息，请输入：")
+        args.seme = input().strip()
+    if not args.seme_id:
+        logger.info("没有识别到学期 ID 信息，请输入：")
+        args.seme_id = input().strip()
+    if not args.session:
+        logger.info("没有识别到 Session ID 信息，请输入：")
+        args.session = input().strip()
+    if not args.first_day:
+        logger.info("没有识别到学期第一天日期，请输入（格式 YYYY-MM-DD）：")
+        args.first_day = input().strip()
+
+    return args
+
+def main() -> None:
+    args = argument_parser()
+
+    args.seme = args.seme.capitalize() if args.seme else None
     if not all([args.year, args.seme, args.seme_id, args.session, args.first_day]) :
         logger.error(f'请确保已提供完整的学期信息（年份、学期、学期 ID）、可用的 Session ID 和学期第一天日期')
         exit(1)
