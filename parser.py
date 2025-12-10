@@ -160,12 +160,16 @@ def extract_location(lesson_data: dict[str, Any]) -> str:
     return lesson_data['scheduleText']['dateTimePlacePersonText']['textZh'].split()[3]+','+lesson_data['scheduleText']['dateTimePlacePersonText']['textZh'].split()[4]
 
 def extract_grade(lesson_data: dict[str, Any]) -> str:
-    tmp = lesson_data['nameZh'].replace(';', ' ').replace(',', ' ').split()
+    name_zh = lesson_data['nameZh']
+    # 使用否定前瞻和后顾来确保匹配的是独立的四位数字
+    found_years = re.findall(r'(?<!\d)\d{4}(?!\d)', name_zh)
+    
+    # 去重
     res = []
-    for item in tmp:
-        if re.match(r'^\d{4}$', item):
-            if item not in res:
-                res.append(item)
+    for year in found_years:
+        if year not in res:
+            res.append(year)
+            
     return ','.join(res) if res else '无年级'
 
 def extract_gen_type(lesson_data: dict[str, Any]) -> str:

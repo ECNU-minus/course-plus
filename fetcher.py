@@ -99,7 +99,7 @@ def argument_parser() -> argparse.Namespace:
         args.year = input().strip()
     if not args.seme:
         logger.info("没有识别到学期信息，请输入：")
-        args.seme = input().strip()
+        args.seme = (input().strip() or '').capitalize()
     if not args.seme_id:
         logger.info("没有识别到学期 ID 信息，请输入：")
         args.seme_id = input().strip()
@@ -115,7 +115,6 @@ def argument_parser() -> argparse.Namespace:
 def main() -> None:
     args = argument_parser()
 
-    args.seme = args.seme.capitalize() if args.seme else None
     if not all([args.year, args.seme, args.seme_id, args.session, args.first_day]) :
         logger.error(f'请确保已提供完整的学期信息（年份、学期、学期 ID）、可用的 Session ID 和学期第一天日期')
         exit(1)
