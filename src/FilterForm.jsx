@@ -154,7 +154,7 @@ export default withRouter(({ history, state, setState }) => {
             ))}
           </div>
         </Form.Row>
-        <Form.Row className='mb-3'>
+        {/* <Form.Row className='mb-3'>
           <Form.Label>课程类型</Form.Label>
           <div className='col-12'>
             {sortBy(keys(dataLx)).map((key) => (
@@ -175,7 +175,7 @@ export default withRouter(({ history, state, setState }) => {
               </Form.Check>
             ))}
           </div>
-        </Form.Row>
+        </Form.Row> */}
         <Form.Row className='mb-3'>
           <Form.Label>开课院系</Form.Label>
           <div className='col-12'>
