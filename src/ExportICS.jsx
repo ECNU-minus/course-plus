@@ -82,18 +82,31 @@ export default function ({ semester, selectedLessonObj }) {
   const [fixtures, setFixtures] = useState(new Set([]))
 
   useEffect(() => {
+    let mounted = true
+
     const getLessonIndex = async () => {
-      const semesterIndex = (
-        await axios.get('/course-plus-data/lessonData_index.json')
-      ).data
-      const index = find(
-        semesterIndex,
-        (index) => semester === `${index.year}_${index.semester}`
-      )
-      setFirstDayDate((index || {}).first_day || '2021-01-01')
+      try {
+        const semesterIndex = (
+          await axios.get('/course-plus-data/lessonData_index.json')
+        ).data
+        if (!mounted) return
+        const index = find(
+          semesterIndex,
+          (idx) => semester === `${idx.year}_${idx.semester}`
+        )
+        setFirstDayDate((index || {}).first_day || '2021-01-01')
+      } catch (e) {
+        if (mounted) {
+          setFirstDayDate('2021-01-01')
+        }
+      }
     }
 
     getLessonIndex().then()
+
+    return () => {
+      mounted = false
+    }
   }, [semester])
 
   // const getFixtures = () => {

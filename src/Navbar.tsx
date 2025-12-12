@@ -39,9 +39,11 @@ function CoursePlusSvg() {
   )
 }
 
-export default () => {
+export default ({ onToggleClick }) => {
   const { pathname } = useLocation()
-  const { semester } = useParams<{ semester?: string }>()
+  const params = useParams<{ semester?: string }>()
+  const semesterFromPath = pathname.match(/^\/([^/]+)/)?.[1]
+  const semester = params.semester || semesterFromPath
   const links = [
     { path: '/browse', text: '搜索', match: '/:semester/browse' },
     { path: '/plan', text: '排课', match: '/:semester/plan' },
@@ -63,11 +65,18 @@ export default () => {
   ))
 
   return (
-    <nav className='navbar navbar-light navbar-expand course-navbar mb-3'>
+    <nav className='navbar navbar-light navbar-expand-md course-navbar mb-3'>
+      <button
+        className='navbar-toggler d-md-none'
+        type='button'
+        onClick={onToggleClick}
+      >
+        <span className='navbar-toggler-icon'></span>
+      </button>
       <span className='navbar-brand mb-0'>
         <CoursePlusSvg /> <span className='align-middle'>Course+</span>
       </span>
-      <div className='collapse navbar-collapse'>
+      <div className='navbar-collapse show'>
         <ul className='navbar-nav ml-auto'>
           {semester ? linksComponent : null}
         </ul>

@@ -42,6 +42,7 @@ import SyncButton from './SyncButton'
 import { useLocalStorageSet } from './Utils'
 
 function App() {
+  const [isMenuOpen, setMenuOpen] = useState(false)
   const [filterFormState, setFilterFormState] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -74,6 +75,40 @@ function App() {
   const [sjtuLessonLoading, setSjtuLessonLoading] = useState(false)
 
   const [loginDialog, setLoginDialog] = useState(false)
+
+  const MainRoute = () => {
+    const { pathname } = useLocation()
+    const { semester } = useParams()
+    if (!semester) return null
+    const match = matchPath(pathname, {
+      path: '/:semester/browse',
+      exact: true,
+    })
+    if (match) {
+      return <FilterForm state={filterFormState} setState={setFilterFormState} />
+    }
+    return <PlanForm selectedLesson={selectedLesson} />
+  }
+
+  const BrowseRoute = () => {
+    const { pathname } = useLocation()
+    const { semester } = useParams()
+    if (!semester) return null
+    const match = matchPath(pathname, {
+      path: '/:semester/browse',
+      exact: true,
+    })
+    if (match) {
+      return (
+        <LessonList
+          filterData={filterFormState}
+          state={starLesson}
+          setState={setStarLesson}
+        />
+      )
+    }
+    return null
+  }
 
   const removeStarLesson = (value) => {
     const set = new Set(starLesson)
@@ -140,30 +175,22 @@ function App() {
 
   return (
     <Router>
-      <LoginModal show={loginDialog} nextStep={handleLogin}></LoginModal>
+      <div className='container-fluid d-flex flex-column vh-100' style={{ minHeight: 0 }}>
+        <Navbar onToggleClick={() => setMenuOpen(!isMenuOpen)} />
+        <LoginModal show={loginDialog} nextStep={handleLogin}></LoginModal>
 
-      <div className='container-fluid h-100'>
-        <div className='row h-100'>
-          <div className='col-md-3 d-none d-md-block h-100 bg-light overflow-auto'>
-            <Switch>
-              <Route exact path='/'>
-                <Navbar />
-              </Route>
-              <Route path='/:semester'>
-                <Navbar />
-              </Route>
-            </Switch>
-
-            <div className='container'>
-              <Switch>
-                <Route exact path='/'>
-                  <SemesterNav />
-                </Route>
-                <Route path='/:semester/:path'>
-                  <SemesterNav />
-                  <hr />
-                </Route>
-              </Switch>
+        <div className='row flex-grow-1 h-100' style={{ minHeight: 0 }}>
+          <div
+            className={`col-md-3 sidebar-container ${isMenuOpen ? 'open' : ''} h-100 d-flex flex-column`}
+            style={{ minHeight: 0 }}
+          >
+            <div
+              className='sidebar-overlay d-md-none'
+              onClick={() => setMenuOpen(false)}
+            ></div>
+            <div className='sidebar h-100'>
+              <SemesterNav />
+              <hr />
               <Switch>
                 <Route path='/:semester/browse'>
                   <FilterForm
@@ -191,6 +218,12 @@ function App() {
                     colorMapping={colorize(sjtuLesson)}
                   />
                 </Route>
+                <Route>
+                  <FilterForm
+                    state={filterFormState}
+                    setState={setFilterFormState}
+                  />
+                </Route>
               </Switch>
 
               <p className='text-muted my-3 small'>
@@ -202,7 +235,7 @@ function App() {
                 >
                   华东师范大学教育教学管理平台
                 </a>
-                ，数据更新存在一定延迟性。具体开课情况以本科生院安排为准。
+                ，数据更新存在一定延迟性。且本网站仅供学习和交流使用，具体情况以本科生院安排为准。
               </p>
               <div className='row'>
                 <div className='col d-flex d-row align-items-center'>
@@ -235,46 +268,36 @@ function App() {
               </div>
             </div>
           </div>
-          <div className='col-md-9 h-100 classtable-wrapper'>
-            <div className='mb-3'>
-              <Switch>
-                <Route path='/:semester/browse'>
-                  <ShowClassTable></ShowClassTable>
-                </Route>
-                <Route path='/:semester/plan'>
-                  <ShowClassTable></ShowClassTable>
-                </Route>
-                <Route path='/:semester/classtable'>
-                  <SyncButton
-                    syncFromISJTU={syncFromISJTU}
-                    dataLoading={sjtuLessonLoading}
-                  ></SyncButton>
-                </Route>
-              </Switch>
-            </div>
-            <div className='classtable-frame w-100'>
-              <Switch>
-                <Route path='/:semester/browse'>
-                  <LessonList
-                    filterData={filterFormState}
-                    state={starLesson}
-                    setState={setStarLesson}
-                  />
-                </Route>
-                <Route path='/:semester/plan'>
-                  <ClassTable
-                    selectedLesson={selectedLesson}
-                    colorMapping={colorize(starLesson)}
-                  />
-                </Route>
-                <Route path='/:semester/classtable'>
-                  <ClassTable
-                    selectedLesson={sjtuLesson}
-                    colorMapping={colorize(sjtuLesson)}
-                  />
-                </Route>
-              </Switch>
-            </div>
+
+          <div className='col-md-9 main-content h-100 d-flex flex-column' style={{ minHeight: 0 }}>
+            <Switch>
+              <Route path='/:semester/classtable'>
+                <ClassTable
+                  selectedLesson={selectedLesson}
+                  colorMapping={colorize(starLesson)}
+                />
+              </Route>
+              <Route path='/:semester/plan'>
+                <ClassTable
+                  selectedLesson={selectedLesson}
+                  colorMapping={colorize(starLesson)}
+                />
+              </Route>
+              <Route path='/:semester/browse'>
+                <LessonList
+                  filterData={filterFormState}
+                  state={starLesson}
+                  setState={setStarLesson}
+                />
+              </Route>
+              <Route>
+                <LessonList
+                  filterData={filterFormState}
+                  state={starLesson}
+                  setState={setStarLesson}
+                />
+              </Route>
+            </Switch>
           </div>
         </div>
       </div>

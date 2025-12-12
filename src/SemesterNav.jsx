@@ -19,34 +19,41 @@ import { useLocation, useParams, withRouter } from 'react-router-dom'
 export default withRouter(({ history }) => {
   const [lessonList, setLessonList] = useState([])
   const location = useLocation()
-  const { semester, path } = useParams()
+  const { semester: semesterParam } = useParams()
+  const semesterFromPath = location.pathname.match(/^\/([^/]+)/)?.[1]
+  const currentSemester = semesterParam || semesterFromPath || ''
 
   useEffect(() => {
     const getLessonIndex = async () => {
       const response = (
         await axios.get('/course-plus-data/lessonData_index.json')
       ).data
-      const lastIndex = response[response.length - 1]
-      if (path) {
-        history.push(`/${lastIndex.year}_${lastIndex.semester}/${path}`)
-      } else {
-        history.push(`/${lastIndex.year}_${lastIndex.semester}/browse`)
-      }
       setLessonList(response)
+
+      // 如果当前 URL 没有学期,默认跳转到最新学期的 browse
+      if (!currentSemester && response.length > 0) {
+        const lastIndex = response[response.length - 1]
+        history.replace(`/${lastIndex.year}_${lastIndex.semester}/browse`)
+      }
     }
 
     getLessonIndex().then()
-  }, [history])
+  }, [history, currentSemester])
 
   const onPathChange = (event) => {
-    history.push(`/${event.target.value}/${path}`)
+    const nextPath = location.pathname.split('/')[2] || 'browse'
+    history.push(`/${event.target.value}/${nextPath}`)
   }
 
   return (
     <div className='form-row'>
       <Form.Group className='col mb-3'>
         <Form.Label>学年学期</Form.Label>
-        <Form.Control as='select' onChange={onPathChange}>
+        <Form.Control
+          as='select'
+          onChange={onPathChange}
+          value={currentSemester}
+        >
           {lessonList
             .map((option) => {
               let semesterChinese = ''

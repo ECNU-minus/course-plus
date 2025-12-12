@@ -104,7 +104,11 @@ export default ({
         <button
           type='button'
           className='btn btn-sm btn-outline-primary'
-          onClick={() => setState(new Set(starLessonObj.map((l) => l.jxbmc)))}
+          onClick={() => {
+            const next = new Set(state)
+            starLessonObj.forEach((l) => next.add(l.jxbmc))
+            setState(next)
+          }}
         >
           全部选中
         </button>
@@ -112,7 +116,11 @@ export default ({
         <button
           type='button'
           className='btn btn-sm btn-outline-primary ml-2'
-          onClick={() => setState(new Set())}
+          onClick={() => {
+            const next = new Set(state)
+            lessons.forEach((l) => next.delete(l.jxbmc))
+            setState(next)
+          }}
         >
           取消全选
         </button>
