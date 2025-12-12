@@ -1,10 +1,37 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by ChiyoYuki from ECNU-minus on 2025-12-12
+ * Changes:
+ * - feat: 美化
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 @import "~bootstrap/scss/bootstrap";
 
 .course-navbar {
   ul {
+    li {
+      margin-left: 0.25rem;
+      a {
+        color: #0080ff !important;
+        font-weight: bold;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        transition: background-color 0.2s;
+        text-align: center;
+      }
+    }
     li.active {
       a {
-        border-bottom: 1px solid theme-color("dark");
+        font-weight: bold;
+        color: #ffffff !important;
+        background-color: #0080ff;
+        border-bottom: none;
       }
     }
   }
@@ -194,4 +221,12 @@
   margin-right: 0.5rem;
   border-radius: 50%;
   display: inline-block;
+}
+
+.kcbm {
+  a {
+    white-space: normal !important;
+    word-break: break-all;
+    text-align: left;
+  }
 }
