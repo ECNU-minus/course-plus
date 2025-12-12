@@ -3,9 +3,10 @@
  * Copyright 2020-2025 SJTU-Plus
  *
  * ----------------------------------------------------------------
- * Modified by ChiyoYuki from ECNU-minus on 2025-12-03
+ * Modified by ChiyoYuki and Niazye from ECNU-minus on 2025-12-12
  * Changes:
  * - fix: wrong text
+ * - fix: hide unusable filters
  *
  * Copyright 2025 ECNU-minus
  * ----------------------------------------------------------------
@@ -132,7 +133,7 @@ export default withRouter(({ history, state, setState }) => {
           </Form.Group>
         </Form.Row>
         <hr />
-        <Form.Row className='mb-3'>
+        {/* <Form.Row className='mb-3'>
           <Form.Label>年级</Form.Label>
           <div className='col-12'>
             {sortBy(keys(dataNj)).map((key) => (
@@ -153,7 +154,7 @@ export default withRouter(({ history, state, setState }) => {
               </Form.Check>
             ))}
           </div>
-        </Form.Row>
+        </Form.Row> */}
         {/* <Form.Row className='mb-3'>
           <Form.Label>课程类型</Form.Label>
           <div className='col-12'>

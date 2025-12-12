@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye from ECNU-minus on 2025-12-12
+ * Changes:
+ * - fix: hide unusable filters
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import sortBy from 'lodash/sortBy'
 import uniqBy from 'lodash/uniqBy'
 import React, { useState } from 'react'
@@ -15,7 +28,7 @@ const tableHeader = [
   '学时/学分',
   '上课时间地点',
   '备注',
-  '年级',
+  // '年级',
   '教学组成',
 ]
 

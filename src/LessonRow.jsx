@@ -1,3 +1,16 @@
+/*
+ * Copyright 2025 SJTU-Geek
+ * Copyright 2020-2025 SJTU-Plus
+ *
+ * ----------------------------------------------------------------
+ * Modified by Niazye from ECNU-minus on 2025-12-12
+ * Changes:
+ * - fix: hide unusable filters
+ *
+ * Copyright 2025 ECNU-minus
+ * ----------------------------------------------------------------
+ */
+
 import React, { useState } from 'react'
 import { Tooltip } from 'react-tippy'
 
@@ -163,7 +176,7 @@ export default function LessonRow({
         <TimeLocation time={lesson.sksj} location={lesson.jxdd}></TimeLocation>
       </td>
       <td className='bz'>{lesson.xkbz}</td>
-      <td className='nj'>{lesson.nj}</td>
+      {/* <td className='nj'>{lesson.nj}</td> */}
       <td className='jxbzc'>
         <BreakLine data={lesson.jxbzc} sep=';'></BreakLine>
       </td>
