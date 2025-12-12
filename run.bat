@@ -1,5 +1,5 @@
 @echo off
-echo 正在执行 Windows CMD 脚本...
+echo "正在执行 Windows CMD 脚本..."
 
 REM 删除目录
 rmdir /s /q "public\course-plus-data"
@@ -19,7 +19,7 @@ move "LessonData" "public\course-plus-data\"
 REM 添加所有更改到 git
 git add .
 
-echo 已获取数据
-echo 正在进行环境配置，等待配置完成后使用 yarn start 本地部署
+echo "已获取数据"
+echo "正在进行环境配置，等待配置完成后使用 yarn start 本地部署"
 
 yarn
