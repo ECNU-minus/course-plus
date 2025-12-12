@@ -109,6 +109,11 @@ def argument_parser() -> argparse.Namespace:
     if not args.first_day:
         logger.info("没有识别到学期第一天日期，请输入（格式 YYYY-MM-DD）：")
         args.first_day = input().strip()
+    if not args.parser:
+        logger.info("是否要解析数据？（y/n，默认 n）：")
+        user_input = input().strip().lower()
+        if user_input == 'y' or user_input == 'yes':
+            args.parser = True
 
     return args
 
