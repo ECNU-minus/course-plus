@@ -73,6 +73,17 @@ export default ({ onToggleClick }) => {
       >
         <span className='navbar-toggler-icon'></span>
       </button>
+      <span
+        className='navbar-text d-md-none mx-2'
+        style={{
+          color: '#ffc107',
+          backgroundColor: '#f2f2f2',
+          padding: '0.1rem 0.35rem',
+          borderRadius: '0.25rem',
+        }}
+      >
+        为保证最佳体验，建议使用PC端访问
+      </span>
       <span className='navbar-brand mb-0'>
         <CoursePlusSvg /> <span className='align-middle'>Course+</span>
       </span>
