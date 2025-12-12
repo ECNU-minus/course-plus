@@ -85,7 +85,9 @@ function App() {
       exact: true,
     })
     if (match) {
-      return <FilterForm state={filterFormState} setState={setFilterFormState} />
+      return (
+        <FilterForm state={filterFormState} setState={setFilterFormState} />
+      )
     }
     return <PlanForm selectedLesson={selectedLesson} />
   }
@@ -175,13 +177,18 @@ function App() {
 
   return (
     <Router>
-      <div className='container-fluid d-flex flex-column vh-100' style={{ minHeight: 0 }}>
+      <div
+        className='container-fluid d-flex flex-column vh-100'
+        style={{ minHeight: 0 }}
+      >
         <Navbar onToggleClick={() => setMenuOpen(!isMenuOpen)} />
         <LoginModal show={loginDialog} nextStep={handleLogin}></LoginModal>
 
         <div className='row flex-grow-1 h-100' style={{ minHeight: 0 }}>
           <div
-            className={`col-md-3 sidebar-container ${isMenuOpen ? 'open' : ''} h-100 d-flex flex-column`}
+            className={`col-md-3 sidebar-container ${
+              isMenuOpen ? 'open' : ''
+            } h-100 d-flex flex-column`}
             style={{ minHeight: 0 }}
           >
             <div
@@ -269,7 +276,10 @@ function App() {
             </div>
           </div>
 
-          <div className='col-md-9 main-content h-100 d-flex flex-column' style={{ minHeight: 0 }}>
+          <div
+            className='col-md-9 main-content h-100 d-flex flex-column'
+            style={{ minHeight: 0 }}
+          >
             <Switch>
               <Route path='/:semester/classtable'>
                 <ClassTable
