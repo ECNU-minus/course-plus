@@ -258,7 +258,14 @@ function App() {
                     >
                       ECNU-Minus
                     </a>
-                    维护。
+                    维护。如您有任何需要或问题反馈，请加入{' '}
+                    <a
+                      href='https://qm.qq.com/q/HBbLlBtnuq'
+                      target='_blank'
+                      rel='noreferrer'
+                    >
+                      我们的用户群
+                    </a>
                   </p>
                 </div>
               </div>
