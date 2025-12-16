@@ -37,24 +37,9 @@ def extract_teachers(lesson_data: dict[str, Any]) -> str:
             teachers.append(assignment['person']['nameZh'])
     return ','.join(teachers)
 
-def extract_college(lesson_data: dict[str, Any]) -> tuple[str, str]:
+def extract_college(lesson_data: dict[str, Any]) -> str:
     college_name = lesson_data['openDepartment']['nameZh']
-    with open(f'{BASE_PATH}/college_id.json', 'r', encoding='utf-8') as f:
-        college_dict = json.load(f)
-    '''
-    以下是由于啥比学校自己都没有搞好的课程信息规范而迫不得已做出的补丁
-    '''
-    if college_name == '河口海岸科学研究院' and lesson_data['course']['code'] == 'ESTU1702':
-        college_name = '河口海岸科学研究院办公室'
-    if college_name == '河口海岸科学研究院' and lesson_data['course']['code'] == 'ESTU1703':
-        college_name = '河口海岸科学研究院办公室'
-    if college_name == '教育科学学院' and lesson_data['course']['code'] == 'PHIL1103':
-        college_name = '哲学系'
-    '''
-    以上是由于啥比学校自己都没有搞好的课程信息规范而迫不得已做出的补丁
-    '''
-    college_id = college_dict[f'{college_name}']
-    return college_name, college_id
+    return college_name
 
 def extract_time(lesson_data: dict[str, Any]) -> tuple[list[tuple[str, str, str]], str, str]:
     if lesson_data['scheduleText']['dateTimePlacePersonText']['textZh'] is None:
@@ -275,10 +260,9 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
             "qsjsz": "",
             "zjs": extract_teachers(lesson_data).split(',')[0],
             "jszc": extract_teachers(lesson_data),
-            "kkbm_id": extract_college(lesson_data)[1],
             "xqj": "0", # Invalid day
             "kch": extract_code(lesson_data),
-            "kkxy": extract_college(lesson_data)[0],
+            "kkxy": extract_college(lesson_data),
             "zcd": 0,
             "sksj": sksj,
             "kcmc": extract_name(lesson_data),
@@ -312,10 +296,9 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
             "qsjsz": weeks_str,
             "zjs": extract_teachers(lesson_data).split(',')[0],
             "jszc": extract_teachers(lesson_data),
-            "kkbm_id": extract_college(lesson_data)[1],
             "xqj": day_int, # 使用整数形式的星期
             "kch": extract_code(lesson_data),
-            "kkxy": extract_college(lesson_data)[0],
+            "kkxy": extract_college(lesson_data),
             "zcd": current_zcd,
             "sksj": sksj, # 保留完整字符串用于展示
             "kcmc": extract_name(lesson_data),
