@@ -41,6 +41,18 @@ def extract_college(lesson_data: dict[str, Any]) -> tuple[str, str]:
     college_name = lesson_data['openDepartment']['nameZh']
     with open(f'{BASE_PATH}/college_id.json', 'r', encoding='utf-8') as f:
         college_dict = json.load(f)
+    '''
+    以下是由于啥比学校自己都没有搞好的课程信息规范而迫不得已做出的补丁
+    '''
+    if college_name == '河口海岸科学研究院' and lesson_data['course']['code'] == 'ESTU1702':
+        college_name = '河口海岸科学研究院办公室'
+    if college_name == '河口海岸科学研究院' and lesson_data['course']['code'] == 'ESTU1703':
+        college_name = '河口海岸科学研究院办公室'
+    if college_name == '教育科学学院' and lesson_data['course']['code'] == 'PHIL1103':
+        college_name = '哲学系'
+    '''
+    以上是由于啥比学校自己都没有搞好的课程信息规范而迫不得已做出的补丁
+    '''
     college_id = college_dict[f'{college_name}']
     return college_name, college_id
 
