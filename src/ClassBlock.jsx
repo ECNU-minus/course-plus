@@ -55,13 +55,12 @@ export default ({
   selectedLesson,
 }) => {
   const weekDots = []
-  // const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
-  const maxWeek = 18
+  const maxWeek = max(flatMap(selectedLesson, (lesson) => parseBin(lesson.zcd)))
   const conflictLesson = []
   const showLesson = {}
   let showDots = false
   const maxDay = max(map(selectedLesson, 'xqj')) || 0
-  const splitArray = maxDay <= 5 ? [9, 9, 18] : [4, 4, 9]
+  const splitArray = maxDay <= 5 ? [5, 10, 20] : [5, 5, 10]
 
   for (let week = 0; week < maxWeek; week++) {
     let dot = ''
