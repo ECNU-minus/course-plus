@@ -88,32 +88,43 @@ def argument_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Fetch course data from ECNU Course Plus')
     parser.add_argument('--year', '-y', type=str, help='学期所处年份（非学年），如 2026')
     parser.add_argument('--seme', '-s', type=str, help='具体学期，如 spring', choices=['spring', 'summer', 'autumn'])
-    parser.add_argument('--seme-id', '-i', type=str, help='学期 ID，如 1629')
-    parser.add_argument('--session', '-c', type=str, help='Session ID，如 9750a438-52a2-405e-beb2-b3b2b4c38719')
-    parser.add_argument('--first-day', '-f', type=str, help='学期第一天日期，格式 YYYY-MM-DD')
-    parser.add_argument('--parser', '-p', action="store_true", help='是否解析数据（默认不解析）')
+    parser.add_argument('--session', '-c', type=str, help='Session，如 9750a438-52a2-405e-beb2-b3b2b4c38719')
+    parser.add_argument('--seme-id', '-i', type=str, help='学期 ID，如 1629，如果要覆盖已存储的数据，需提供该参数')
+    parser.add_argument('--first-day', '-f', type=str, help='学期第一天日期，格式 YYYY-MM-DD，如果要覆盖已存储的数据，需提供该参数')
+
 
     args = parser.parse_args()
-    if not args.year:
+    while not args.year:
         logger.info("没有识别到年份信息，请输入：")
         args.year = input().strip()
-    if not args.seme:
+    while not args.seme:
         logger.info("没有识别到学期信息，请输入：")
         args.seme = (input().strip() or '').capitalize()
-    if not args.seme_id:
-        logger.info("没有识别到学期 ID 信息，请输入：")
-        args.seme_id = input().strip()
-    if not args.session:
-        logger.info("没有识别到 Session ID 信息，请输入：")
+    while not args.session:
+        logger.info("没有识别到 Session 信息，请输入：")
         args.session = input().strip()
+    if not args.seme_id:
+        logger.info("没有识别到学期 ID 信息，请输入：（留空则使用默认值）")
+        args.seme_id = input().strip()
+        if args.seme_id == '':
+            with open(os.path.join(base_path, 'lessonData_index.json'), 'r', encoding='utf-8') as f:
+                index_data: list[dict[str, str]] = json.load(f)
+            for item in index_data:
+                if item['year'] == calc_aca_year(args.year, args.seme) and item['semester'].lower() == args.seme.lower():
+                    logger.info(f'已在 lessonData_index.json 中找到对应学期的记录，使用已有的 seme_id 信息')
+                    args.seme_id = item.get('seme_id', '')
+                    break
     if not args.first_day:
-        logger.info("没有识别到学期第一天日期，请输入（格式 YYYY-MM-DD）：")
+        logger.info("没有识别到学期第一天日期，请输入（格式 YYYY-MM-DD）：（留空则使用默认值）")
         args.first_day = input().strip()
-    if not args.parser:
-        logger.info("是否要解析数据？（y/n，默认 n）：")
-        user_input = input().strip().lower()
-        if user_input == 'y' or user_input == 'yes':
-            args.parser = True
+        if args.first_day == '':
+            with open(os.path.join(base_path, 'lessonData_index.json'), 'r', encoding='utf-8') as f:
+                index_data: list[dict[str, str]] = json.load(f)
+            for item in index_data:
+                if item['year'] == calc_aca_year(args.year, args.seme) and item['semester'].lower() == args.seme.lower():
+                    logger.info(f'已在 lessonData_index.json 中找到对应学期的记录，使用已有的 first_day 信息')
+                    args.first_day = item.get('first_day', '')
+                    break
 
     return args
 
@@ -156,10 +167,9 @@ def main() -> None:
     logger.info(f'全部数据获取完成，已保存至 LessonData/{full_semester}.json，共 {len(lesson_data)} 条记录')
     update_lessonData_index(aca_year, seme, first_day, full_semester)
     
-    if args.parser:
-        import parser
-        parser.main(year, seme)
-        logger.info(f'数据解析完成')
+    import parser
+    parser.main(year, seme)
+    logger.info(f'数据解析完成')
 
 if __name__ == '__main__':
     main()
