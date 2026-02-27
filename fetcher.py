@@ -25,12 +25,12 @@ def find_base_path() -> str:
 
 base_path = find_base_path()
 
-def get(page_num: int = 1, page_size: int = 20, semester_id: str = '1629', session: str = '') -> dict:
+def get(page_num: int = 1, page_size: int = 20, semester_id: str = '1629', session: str = '', grade: str = 'under') -> dict:
     logger.info(f'获取第 {page_num} 页数据')
 
     url = 'https://byyt.ecnu.edu.cn/student/for-std/lesson-search/search/813450'
     paras = {
-            'bizTypeAssoc': ['2'],
+            'bizTypeAssoc': ['2' if grade == 'under' else '3'],
             'semesterAssocs': [semester_id],
             'searchTeachingSyllabus': ['true'],
             'queryPage__': [f'{page_num},{page_size}'],
@@ -49,7 +49,7 @@ def get(page_num: int = 1, page_size: int = 20, semester_id: str = '1629', sessi
 
     return response.json()
 
-def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_semester: str) -> None:
+def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_semester: str, seme_id: str) -> None:
     index_path = os.path.join(base_path, 'lessonData_index.json')
     with open(index_path, 'r', encoding='utf-8') as f:
         index_data: list[dict[str, str]] = json.load(f)
@@ -61,6 +61,7 @@ def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_s
             item['updated_at'] = time.strftime('%Y-%m-%d', time.localtime())
             item['first_day'] = first_day
             item['updated_time'] = time.strftime('%H:%M', time.localtime())
+            item['seme_id'] = seme_id
             already_exists = True
             break
     if not already_exists:
@@ -69,7 +70,8 @@ def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_s
             'semester': semester,
             'updated_at': time.strftime('%Y-%m-%d', time.localtime()),
             'first_day': first_day,
-            'updated_time': time.strftime('%H:%M', time.localtime())
+            'updated_time': time.strftime('%H:%M', time.localtime()),
+            'seme_id': seme_id
         }
         index_data.append(new_entry)
 
@@ -79,7 +81,7 @@ def update_lessonData_index(aca_year: str, semester: str, first_day: str, full_s
     logger.info(f'已向 lessonData_index.json 添加 {full_semester} 学期的信息，first_day 字段')
 
 def calc_aca_year(year: str, seme: str | int) -> str:
-    if seme == 'Autumn' or seme == 1 or seme == '1':
+    if seme == 'Autumn' or seme == 'autumn' or seme == 1 or seme == '1':
         return f"{year}-{int(year) + 1}"
     else:
         return f"{int(year) - 1}-{year}"
@@ -91,7 +93,7 @@ def argument_parser() -> argparse.Namespace:
     parser.add_argument('--session', '-c', type=str, help='Session，如 9750a438-52a2-405e-beb2-b3b2b4c38719')
     parser.add_argument('--seme-id', '-i', type=str, help='学期 ID，如 1629，如果要覆盖已存储的数据，需提供该参数')
     parser.add_argument('--first-day', '-f', type=str, help='学期第一天日期，格式 YYYY-MM-DD，如果要覆盖已存储的数据，需提供该参数')
-
+    parser.add_argument('--grade', '-g', type=str, help='本科生或研究生，输入 under 或 post', choices=['under', 'post'])
 
     args = parser.parse_args()
     while not args.year:
@@ -125,7 +127,9 @@ def argument_parser() -> argparse.Namespace:
                     logger.info(f'已在 lessonData_index.json 中找到对应学期的记录，使用已有的 first_day 信息')
                     args.first_day = item.get('first_day', '')
                     break
-
+    while not args.grade:
+        logger.info("没有识别到年级信息，请输入（under/post）：")
+        args.grade = input().strip()
     return args
 
 def main() -> None:
@@ -134,13 +138,13 @@ def main() -> None:
     if not all([args.year, args.seme, args.seme_id, args.session, args.first_day]) :
         logger.error(f'请确保已提供完整的学期信息（年份、学期、学期 ID）、可用的 Session ID 和学期第一天日期')
         exit(1)
-    year, seme, seme_id, session, first_day = args.year, args.seme.capitalize(), args.seme_id, args.session, args.first_day
+    year, seme, seme_id, session, first_day, grade = args.year, args.seme.capitalize(), args.seme_id, args.session, args.first_day, args.grade
     aca_year = calc_aca_year(year, seme)
     full_semester = f'{year}_{seme}'
     logger.info(f'当前任务：{full_semester} 学期（{seme_id}）')
     logger.info(f'获取测试数据')
 
-    res: dict[str, Any] = get(semester_id = seme_id, session = session)
+    res: dict[str, Any] = get(semester_id = seme_id, session = session, grade = grade)
 
     lesson_data: list[Any] = res['data']
     total_count = res['_page_']['totalRows']
@@ -154,21 +158,21 @@ def main() -> None:
         exit(1)
     lesson_data: list[Any] = []
     for i in range(1, total_pages + 1):
-        temp_res = get(i, 1000, seme_id, session)
+        temp_res = get(i, 1000, seme_id, session, grade = grade)
         lesson_data += temp_res['data']
 
     if not os.path.exists(os.path.join(base_path, 'LessonData')):
         os.makedirs(os.path.join(base_path, 'LessonData'))
 
-    with open(os.path.join(base_path, 'LessonData', f'{full_semester}.json'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(base_path, 'LessonData', f'{full_semester}_{grade}.json'), 'w', encoding='utf-8') as f:
             json.dump(lesson_data, f, ensure_ascii=False, indent=4)
     
     assert total_count == len(lesson_data)
-    logger.info(f'全部数据获取完成，已保存至 LessonData/{full_semester}.json，共 {len(lesson_data)} 条记录')
-    update_lessonData_index(aca_year, seme, first_day, full_semester)
+    logger.info(f'全部数据获取完成，已保存至 LessonData/{full_semester}_{grade}.json，共 {len(lesson_data)} 条记录')
+    update_lessonData_index(aca_year, seme, first_day, full_semester, seme_id)
     
     import parser
-    parser.main(year, seme)
+    parser.main(year, seme, grade)
     logger.info(f'数据解析完成')
 
 if __name__ == '__main__':

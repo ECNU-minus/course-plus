@@ -2,17 +2,25 @@
     {
         "year": "2025-2026",
         "semester": "Autumn",
-        "updated_at": "2025-12-18",
+        "updated_at": "2026-02-27",
         "first_day": "2025-09-15",
-        "updated_time": "15:08",
+        "updated_time": "16:40",
         "seme_id": "1377"
     },
     {
         "year": "2025-2026",
         "semester": "Spring",
-        "updated_at": "2025-12-22",
+        "updated_at": "2026-02-27",
         "first_day": "2026-03-02",
-        "updated_time": "16:53",
+        "updated_time": "16:34",
         "seme_id": "1629"
+    },
+    {
+        "year": "2024-2025",
+        "semester": "Spring",
+        "updated_at": "2026-02-27",
+        "first_day": "2025-02-17",
+        "updated_time": "16:35",
+        "seme_id": "1313"
     }
 ]

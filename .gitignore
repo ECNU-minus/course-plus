@@ -6,6 +6,7 @@
 .pnp.js
 .venv/
 __pycache__/
+.vscode/
 
 # testing
 /coverage

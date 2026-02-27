@@ -322,7 +322,7 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
         
     return res_list
 
-def main(year: str, semester: str) -> None:
+def main(year: str, semester: str, grade: str) -> None:
     global BASE_PATH
     BASE_PATH = find_base_path()
 
@@ -333,12 +333,15 @@ def main(year: str, semester: str) -> None:
             continue
         if not filename.endswith('.json'):
             continue
-        cur_year, cur_seme = filename[:-5].split('_')
+        cur_year, cur_seme, cur_grade, *_ = filename[:-5].split('_') + [None]
         if year:
             if cur_year != year:
                 continue
         if semester:
             if cur_seme != semester:
+                continue
+        if grade:
+            if cur_grade != grade:
                 continue
 
         if 'Autumn' in filename:
@@ -348,7 +351,7 @@ def main(year: str, semester: str) -> None:
         else:
             semester_code = 3
 
-        out_file_name = f'Parsed_{calc_aca_year(cur_year, semester_code)}_{cur_seme}.json'
+        out_file_name = f'Parsed_{calc_aca_year(cur_year, semester_code)}_{cur_seme}_{grade}.json'
         with open(os.path.join(BASE_PATH, 'LessonData', filename), 'r', encoding='utf-8') as f:
             lesson_data_list: list[dict[str, Any]] = json.load(f)
             parsed_data_list: list[dict[str, Any]] = []
@@ -359,4 +362,4 @@ def main(year: str, semester: str) -> None:
                 json.dump(parsed_data_list, fout, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    main('2026', 'Spring')
+    main('2026', 'Spring', 'under')
