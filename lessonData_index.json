@@ -22,5 +22,13 @@
         "first_day": "2025-02-17",
         "updated_time": "16:35",
         "seme_id": "1313"
+    },
+    {
+        "year": "2025-2026",
+        "semester": "Summer",
+        "updated_at": "2026-04-20",
+        "first_day": "2026-07-06",
+        "updated_time": "16:17",
+        "seme_id": "1630"
     }
 ]
