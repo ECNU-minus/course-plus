@@ -1,3 +1,5 @@
+from ast import pattern
+
 from fetcher import calc_aca_year
 from typing import Any
 import re
@@ -41,60 +43,114 @@ def extract_college(lesson_data: dict[str, Any]) -> str:
     college_name = lesson_data['openDepartment']['nameZh']
     return college_name
 
-def extract_time(lesson_data: dict[str, Any]) -> tuple[list[tuple[str, str, str]], str, str]:
+def extract_single_time_block(teachers: list[str], block: str) -> dict[str, str | list[str]]:
+    pattern = r'([\d,~()单双]+周)\s+(\S+)\s+([\d~]+节)'
+    match = re.search(pattern, block)
+    
+    if match:
+        weeks = match.group(1)
+        day = match.group(2)
+        period = match.group(3)
+        
+        # Normalize weeks
+        week_parts = re.split(r',', weeks)
+        formatted_parts = []
+        for part in week_parts:
+            if '(' in part and ')' in part:
+                bracket_match = re.match(r'([\d~]+)\(([^)]+)\)周', part)
+                if bracket_match:
+                    main_part, modifier = bracket_match.groups()
+                    formatted_parts.append(f"{main_part.replace('~', '-')}({modifier})周")
+                else:
+                    formatted_parts.append(part.replace('~', '-'))
+            else:
+                formatted_parts.append(part.replace('~', '-'))
+        weeks_formatted = ','.join(formatted_parts)
+        
+        period_formatted = period.replace('~', '-')
+        
+        # Extract location
+        end_pos = match.end()
+        remaining = block[end_pos:].strip()
+        rem_parts = remaining.split()
+        
+        location_parts = []
+        for part in rem_parts:
+            if part not in teachers:
+                location_parts.append(part)
+        
+        location = " ".join(location_parts)
+    return {
+        'day': day,
+        'period': period_formatted,
+        'weeks': weeks_formatted,
+        'location': location
+    }
+
+def generate_single_course(parsed_blocks):
+    aggregated = {}
+    for item in parsed_blocks:
+        key = (item['day'], item['period'], item['location'])
+        if key not in aggregated:
+            aggregated[key] = []
+        aggregated[key].append(item['weeks'])
+        
+    sksj_parts = []
+    jxdd_parts = []
+    details = []
+    
+    for (day, period, location), weeks_list in aggregated.items():
+        unique_weeks = []
+        seen = set()
+        for w in weeks_list:
+            if w not in seen:
+                unique_weeks.append(w)
+                seen.add(w)
+        
+        final_weeks_str = ",".join([w.replace('周', '') for w in unique_weeks]) + "周"
+        
+        sksj_parts.append(f"{day}第{period}{{{final_weeks_str}}}")
+        jxdd_parts.append(location)
+        details.append((day, period, final_weeks_str))
+        # details = (day, period, final_weeks_str)
+        
+    if not details:
+        details = ('', '', '')
+
+    return details, ";".join(sksj_parts), ";".join(jxdd_parts)
+
+def extract_time(lesson_data: dict[str, Any]) -> list[tuple[list[tuple[str, str, str]], str, str]]:
     if lesson_data['scheduleText']['dateTimePlacePersonText']['textZh'] is None:
-        return ([('', '', '')], '', '')
+        return []
     
     cleaned_input = lesson_data['scheduleText']['dateTimePlacePersonText']['textZh'].replace('\n', '').strip()
     time_blocks = [block.strip() for block in cleaned_input.split(';') if block.strip()]
     
-    parsed_blocks = []
-    teachers = [t['person']['nameZh'] for t in lesson_data['teacherAssignmentList']]
-
+    blocks_with_sharp = []
+    blocks_without_sharp = []
     for block in time_blocks:
-        pattern = r'([\d,~()单双]+周)\s+(\S+)\s+([\d~]+节)'
-        match = re.search(pattern, block)
-        
-        if match:
-            weeks = match.group(1)
-            day = match.group(2)
-            period = match.group(3)
-            
-            # Normalize weeks
-            week_parts = re.split(r',', weeks)
-            formatted_parts = []
-            for part in week_parts:
-                if '(' in part and ')' in part:
-                    bracket_match = re.match(r'([\d~]+)\(([^)]+)\)周', part)
-                    if bracket_match:
-                        main_part, modifier = bracket_match.groups()
-                        formatted_parts.append(f"{main_part.replace('~', '-')}({modifier})周")
-                    else:
-                        formatted_parts.append(part.replace('~', '-'))
-                else:
-                    formatted_parts.append(part.replace('~', '-'))
-            weeks_formatted = ','.join(formatted_parts)
-            
-            period_formatted = period.replace('~', '-')
-            
-            # Extract location
-            end_pos = match.end()
-            remaining = block[end_pos:].strip()
-            rem_parts = remaining.split()
-            
-            location_parts = []
-            for part in rem_parts:
-                if part not in teachers:
-                    location_parts.append(part)
-            
-            location = " ".join(location_parts)
-            
-            parsed_blocks.append({
-                'day': day,
-                'period': period_formatted,
-                'weeks': weeks_formatted,
-                'location': location
-            })
+        if block.startswith('#'):
+            blocks_with_sharp.append(block[1:].strip())
+        else:
+            blocks_without_sharp.append(block)
+
+    parsed_blocks_with_sharp = []
+    parsed_blocks_without_sharp = []
+    teachers = [t['person']['nameZh'] for t in lesson_data['teacherAssignmentList']]
+    for block in blocks_with_sharp:
+        parsed_blocks_with_sharp.append(extract_single_time_block(teachers, block))
+    for block in blocks_without_sharp:
+        parsed_blocks_without_sharp.append(extract_single_time_block(teachers, block))
+
+    returns = []
+    for j, block_sharp in enumerate(parsed_blocks_with_sharp):
+        final_blocks = [block_sharp]
+        for i, block_no_sharp in enumerate(parsed_blocks_without_sharp):
+            final_blocks.append(block_no_sharp)
+        returns.append(generate_single_course(final_blocks))
+    if not parsed_blocks_with_sharp:
+        returns.append(generate_single_course(parsed_blocks_without_sharp))
+    return returns
 
     # Aggregate
     aggregated = {}
@@ -123,7 +179,7 @@ def extract_time(lesson_data: dict[str, Any]) -> tuple[list[tuple[str, str, str]
         details.append((day, period, final_weeks_str))
         
     if not details:
-         details = [('', '', '')]
+        details = [('', '', '')]
 
     return details, ";".join(sksj_parts), ";".join(jxdd_parts)
 
@@ -250,11 +306,16 @@ def calculate_cdjc(period_str: str) -> int:
     return cdjc
 
 def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int) -> list[dict[str, Any]]:
-    time_details, sksj, jxdd = extract_time(lesson_data)
+    temp = extract_time(lesson_data)
+    if temp:
+        list_time_details, list_sksj, list_jxdd = map(list, zip(*temp))
+    else:
+        list_time_details, list_sksj, list_jxdd = [], [], []
+
     aca_year = calc_aca_year(year, semester)
     res_list = []
 
-    if not time_details or time_details == [('', '', '')]:
+    if not list_time_details or list_time_details == [('', '', '')]:
         # 无时间信息的回退处理
         res = {
             "qsjsz": "",
@@ -264,7 +325,7 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
             "kch": extract_code(lesson_data),
             "kkxy": extract_college(lesson_data),
             "zcd": 0,
-            "sksj": sksj,
+            "sksj": list_sksj[0] if list_sksj else "",
             "kcmc": extract_name(lesson_data),
             "skjc": "",
             "jxbmc": f"({aca_year}-{semester})-{extract_class(lesson_data)}",
@@ -280,46 +341,47 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
             "nj": extract_grade(lesson_data),
             "row_id": idx, # This might need to be unique across splits
             "kzmc": extract_gen_type(lesson_data),
-            "jxdd": jxdd,
+            "jxdd": list_jxdd[0] if list_jxdd else "",
         }
         return [res]
 
-    for i, (day_str, period_str, weeks_str) in enumerate(time_details):
-        # 为“当前时间块”计算 zcd 与 cdjc
-        current_zcd = calculate_zcd(weeks_str)
-        current_cdjc = calculate_cdjc(period_str)
-        
-        # 将星期字符串转换为整数
-        day_int = int(DAY_NAMES.get(day_str, 0))
-        
-        res = {
-            "qsjsz": weeks_str,
-            "zjs": extract_teachers(lesson_data).split(',')[0],
-            "jszc": extract_teachers(lesson_data),
-            "xqj": day_int, # 使用整数形式的星期
-            "kch": extract_code(lesson_data),
-            "kkxy": extract_college(lesson_data),
-            "zcd": current_zcd,
-            "sksj": sksj, # 保留完整字符串用于展示
-            "kcmc": extract_name(lesson_data),
-            "skjc": period_str,
-            "jxbmc": f"({aca_year}-{semester})-{extract_class(lesson_data)}",
-            "xf": extract_credits(lesson_data),
-            "rwzxs": extract_periods(lesson_data),
-            "jxbzc": extract_class_comp(lesson_data),
-            "kcxzmc": extract_compulsory(lesson_data),
-            "xkbz": extract_remark(lesson_data),
-            "cdjc": current_cdjc,
-            "xn": f"{aca_year}",
-            "jsxx": extract_teachers(lesson_data),
-            "xq": semester,
-            "nj": extract_grade(lesson_data),
-            "row_id": f"{idx}_{i}", # 为拆分产生的记录生成唯一 row_id
-            "kzmc": extract_gen_type(lesson_data),
-            "jxdd": jxdd, # 保留完整字符串用于展示
-        }
-        res_list.append(res)
-        
+    for i, single_time_detail in enumerate(list_time_details):
+        for j, (day_str, period_str, weeks_str) in enumerate(single_time_detail):
+            # 为“当前时间块”计算 zcd 与 cdjc
+            current_zcd = calculate_zcd(weeks_str)
+            current_cdjc = calculate_cdjc(period_str)
+            
+            # 将星期字符串转换为整数
+            day_int = int(DAY_NAMES.get(day_str, 0))
+            
+            res = {
+                "qsjsz": weeks_str,
+                "zjs": extract_teachers(lesson_data).split(',')[0],
+                "jszc": extract_teachers(lesson_data),
+                "xqj": day_int, # 使用整数形式的星期
+                "kch": extract_code(lesson_data),
+                "kkxy": extract_college(lesson_data),
+                "zcd": current_zcd,
+                "sksj": list_sksj[i], # 保留完整字符串用于展示
+                "kcmc": extract_name(lesson_data),
+                "skjc": period_str,
+                "jxbmc": f"({aca_year}-{semester})-{extract_class(lesson_data)}" + ((f"#{i+1}") if len(list_time_details) > 1 else ""),
+                "xf": extract_credits(lesson_data),
+                "rwzxs": extract_periods(lesson_data),
+                "jxbzc": extract_class_comp(lesson_data),
+                "kcxzmc": extract_compulsory(lesson_data),
+                "xkbz": extract_remark(lesson_data),
+                "cdjc": current_cdjc,
+                "xn": f"{aca_year}",
+                "jsxx": extract_teachers(lesson_data),
+                "xq": semester,
+                "nj": extract_grade(lesson_data),
+                "row_id": f"{idx}_{i}", # 为拆分产生的记录生成唯一 row_id
+                "kzmc": extract_gen_type(lesson_data),
+                "jxdd": list_jxdd[i], # 保留完整字符串用于展示
+            }
+            res_list.append(res)
+            
     return res_list
 
 def main(year: str, semester: str, grade: str) -> None:
@@ -352,14 +414,17 @@ def main(year: str, semester: str, grade: str) -> None:
             semester_code = 3
 
         out_file_name = f'Parsed_{calc_aca_year(cur_year, semester_code)}_{cur_seme}_{grade}.json'
-        with open(os.path.join(BASE_PATH, 'LessonData', filename), 'r', encoding='utf-8') as f:
-            lesson_data_list: list[dict[str, Any]] = json.load(f)
-            parsed_data_list: list[dict[str, Any]] = []
-            for idx, lesson_data in enumerate(lesson_data_list):
-                parsed_entries = parse_single(lesson_data, year, semester_code, idx)
-                parsed_data_list.extend(parsed_entries)
-            with open(os.path.join(BASE_PATH, 'LessonData', out_file_name), 'w', encoding='utf-8') as fout:
-                json.dump(parsed_data_list, fout, ensure_ascii=False, indent=4)
+        try:
+            with open(os.path.join(BASE_PATH, 'LessonData', filename), 'r', encoding='utf-8') as f:
+                lesson_data_list: list[dict[str, Any]] = json.load(f)
+                parsed_data_list: list[dict[str, Any]] = []
+                for idx, lesson_data in enumerate(lesson_data_list):
+                    parsed_entries = parse_single(lesson_data, year, semester_code, idx)
+                    parsed_data_list.extend(parsed_entries)
+                with open(os.path.join(BASE_PATH, 'LessonData', out_file_name), 'w', encoding='utf-8') as fout:
+                    json.dump(parsed_data_list, fout, ensure_ascii=False, indent=4)
+        except FileNotFoundError:
+            print(f"文件 {filename} 未找到，跳过解析")
 
 if __name__ == '__main__':
-    main('2026', 'Spring', 'under')
+    main('2026', 'Autumn', 'under')

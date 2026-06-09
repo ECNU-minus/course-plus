@@ -52,7 +52,7 @@ def get(
     }
     response = requests.get(url, cookies=cookie, params=paras)
     # responese = requests.get(url)
-    print(response.status_code)
+    # print(response.status_code)
     assert response.status_code == 200
 
     if "sso.ecnu.edu.cn" in response.url:
@@ -225,7 +225,7 @@ def main() -> None:
     logger.info(f"当前任务：{full_semester} 学期（{seme_id}）")
     logger.info(f"获取测试数据")
 
-    res: dict[str, Any] = get(semester_id=seme_id, session=session, grade=grade)
+    res: dict[str, Any] = get(url_id=args.url_id, semester_id=seme_id, session=session, grade=grade)
 
     lesson_data: list[Any] = res["data"]
     total_count = res["_page_"]["totalRows"]
