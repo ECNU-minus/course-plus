@@ -6,40 +6,22 @@ import time
 import argparse
 from loguru import logger
 from typing import Any
-
-
+from config import *
 """
 公共数据库用一个规律不明的数字标识学期，由于暂时找不到对应关系，目前只能手动查询获得该标识。
 需要手动选择相应学期进行一次查询，在 浏览器 -> Developer tools -> Internet 中接受一次流量，
 找到 Payload 中的 semesterAssocs 字段，即可获得该学期对应的数字标识。
 """
 
-
-def find_base_path() -> str:
-    current_path = os.path.abspath(__file__)
-    while True:
-        parent_path = os.path.dirname(current_path)
-        if os.path.basename(parent_path) == "course-plus":
-            return parent_path
-        if parent_path == current_path:
-            raise Exception("Base path 'course-plus' not found.")
-        current_path = parent_path
-
-
-base_path = find_base_path()
-
-
 def get(
-    url_id: int = 813935,
     page_num: int = 1,
     page_size: int = 20,
     semester_id: str = "1629",
-    session: str = "",
     grade: str = "under",
 ) -> dict:
     logger.info(f"获取第 {page_num} 页数据")
 
-    url = f"https://byyt.ecnu.edu.cn/student/for-std/lesson-search/search/{url_id}"
+    full_url = f"{url}{url_id}"
     paras = {
         "bizTypeAssoc": ["2" if grade == "under" else "3"],
         "semesterAssocs": [semester_id],
@@ -50,7 +32,7 @@ def get(
     cookie = {
         "SESSION": session,
     }
-    response = requests.get(url, cookies=cookie, params=paras)
+    response = requests.get(full_url, cookies=cookie, params=paras)
     # responese = requests.get(url)
     # print(response.status_code)
     assert response.status_code == 200
@@ -122,12 +104,6 @@ def argument_parser() -> argparse.Namespace:
         choices=["spring", "summer", "autumn"],
     )
     parser.add_argument(
-        "--session",
-        "-c",
-        type=str,
-        help="Session，如 9750a438-52a2-405e-beb2-b3b2b4c38719",
-    )
-    parser.add_argument(
         "--seme-id",
         "-i",
         type=str,
@@ -146,7 +122,6 @@ def argument_parser() -> argparse.Namespace:
         help="本科生或研究生，输入 under 或 post",
         choices=["under", "post"],
     )
-    parser.add_argument("--url_id", "-u", type=str, help="链接中的神秘6位数字")
     args = parser.parse_args()
     while not args.year:
         logger.info("没有识别到年份信息，请输入：")
@@ -154,12 +129,6 @@ def argument_parser() -> argparse.Namespace:
     while not args.seme:
         logger.info("没有识别到学期信息，请输入：")
         args.seme = (input().strip() or "").capitalize()
-    while not args.session:
-        logger.info("没有识别到 Session 信息，请输入：")
-        args.session = input().strip()
-    while not args.url_id:
-        logger.info("没有识别到url中的神秘六位数字，请输入：")
-        args.url_id = input().strip()
     if not args.seme_id:
         logger.info("没有识别到学期 ID 信息，请输入：（留空则使用默认值）")
         args.seme_id = input().strip()
@@ -206,17 +175,15 @@ def argument_parser() -> argparse.Namespace:
 
 def main() -> None:
     args = argument_parser()
-
-    if not all([args.year, args.seme, args.seme_id, args.session, args.first_day]):
+    if not all([args.year, args.seme, args.seme_id, args.first_day]):
         logger.error(
-            f"请确保已提供完整的学期信息（年份、学期、学期 ID）、可用的 Session ID 和学期第一天日期"
+            f"请确保已提供完整的学期信息（年份、学期、学期 ID） 和学期第一天日期"
         )
         exit(1)
-    year, seme, seme_id, session, first_day, grade = (
+    year, seme, seme_id, first_day, grade = (
         args.year,
         args.seme.capitalize(),
         args.seme_id,
-        args.session,
         args.first_day,
         args.grade,
     )
@@ -225,7 +192,7 @@ def main() -> None:
     logger.info(f"当前任务：{full_semester} 学期（{seme_id}）")
     logger.info(f"获取测试数据")
 
-    res: dict[str, Any] = get(url_id=args.url_id, semester_id=seme_id, session=session, grade=grade)
+    res: dict[str, Any] = get(semester_id=seme_id, grade=grade)
 
     lesson_data: list[Any] = res["data"]
     total_count = res["_page_"]["totalRows"]
@@ -243,7 +210,7 @@ def main() -> None:
         exit(1)
     lesson_data: list[Any] = []
     for i in range(1, total_pages + 1):
-        temp_res = get(args.url_id, i, 1000, seme_id, session, grade=grade)
+        temp_res = get( i, 1000, seme_id, grade=grade)
         lesson_data += temp_res["data"]
 
     if not os.path.exists(os.path.join(base_path, "LessonData")):
@@ -270,19 +237,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    # get()
-    # url = 'https://byyt.ecnu.edu.cn/student/for-std/lesson-search/search/813450'
-    # # paras = {
-    # #         'bizTypeAssoc': ['2' if grade == 'under' else '3'],
-    # #         'semesterAssocs': [semester_id],
-    # #         'searchTeachingSyllabus': ['true'],
-    # #         'queryPage__': [f'{page_num},{page_size}'],
-    # #         'assembleFields': []
-    # # }
-    # # cookie = {
-    # #     'SESSION': session,
-    # # }
-    # # response = requests.get(url, cookies=cookie, params=paras)
-    # response = requests.get(url)
-    # print(response.status_code)
-    # assert (response.status_code == 200)
