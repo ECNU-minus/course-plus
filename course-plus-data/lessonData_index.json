@@ -1,0 +1,42 @@
+[
+    {
+        "year": "2024-2025",
+        "semester": "Spring",
+        "updated_at": "2026-02-27",
+        "first_day": "2025-02-17",
+        "updated_time": "16:35",
+        "seme_id": "1313"
+    },
+    {
+        "year": "2025-2026",
+        "semester": "Autumn",
+        "updated_at": "2026-02-27",
+        "first_day": "2025-09-15",
+        "updated_time": "16:40",
+        "seme_id": "1377"
+    },
+    {
+        "year": "2025-2026",
+        "semester": "Spring",
+        "updated_at": "2026-02-27",
+        "first_day": "2026-03-02",
+        "updated_time": "16:34",
+        "seme_id": "1629"
+    },
+    {
+        "year": "2025-2026",
+        "semester": "Summer",
+        "updated_at": "2026-04-28",
+        "first_day": "2026-07-06",
+        "updated_time": "18:29",
+        "seme_id": "1630"
+    },
+    {
+        "year": "2026-2027",
+        "semester": "Autumn",
+        "updated_at": "2026-09-03",
+        "first_day": "2026-09-14",
+        "updated_time": "00:49",
+        "seme_id": "1631"
+    }
+]
