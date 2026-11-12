@@ -38,5 +38,13 @@
         "first_day": "2026-09-14",
         "updated_time": "10:53",
         "seme_id": "1631"
+    },
+    {
+        "year": "2026-2027",
+        "semester": "Spring",
+        "updated_at": "2026-11-12",
+        "first_day": "2027-02-22",
+        "updated_time": "12:03",
+        "seme_id": "1632"
     }
 ]
