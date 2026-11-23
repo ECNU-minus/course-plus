@@ -119,16 +119,22 @@ export default function ({ semester, selectedLessonObj }) {
   // }
 
   const downloadAsICS = () => {
-    downloadFile(
-      `classtable-${semester}.ics`,
-      generateICS(
-        selectedLessonObj,
-        moment(firstDayDate),
-        semester,
-        [] // 传入空数组作为 fixtures 参数，原本的fixture需要手动添加，维护不便，直接舍弃
-      ),
-      'text/calendar'
-    )
+    const firstDay = moment.utc(firstDayDate.trim(), 'YYYY-MM-DD', true)
+    if (!firstDay.isValid()) {
+      window.alert('请输入有效的学期开始日期（YYYY-MM-DD）')
+      return
+    }
+
+    try {
+      const calendar = generateICS(selectedLessonObj, firstDay, semester)
+      if (!calendar) {
+        window.alert('没有可导出的课程')
+        return
+      }
+      downloadFile(`classtable-${semester}.ics`, calendar, 'text/calendar')
+    } catch {
+      window.alert('课表导出失败，请检查课程时间后重试')
+    }
   }
 
   const handleCheckChange = (e) => {

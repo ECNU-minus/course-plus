@@ -47,15 +47,113 @@ export function parseTimeLocation(time, location) {
   return tl
 }
 
-export function parseTimeLocationDay(time, location, day) {
-  const tl = parseTimeLocation(time, location)
-  let result = '数据解析出错'
-  tl.forEach((x) => {
-    if (x.time.substring(0, 3) === dayName[day - 1]) {
-      result = x.location
+function parseWeekSpec(spec) {
+  const weeks = new Set()
+  spec.split(',').forEach((part) => {
+    const match = part.trim().match(/^(\d+)(?:-(\d+))?(?:\((单|双)\))?$/)
+    if (!match) return
+    const start = parseInt(match[1], 10)
+    const end = match[2] ? parseInt(match[2], 10) : start
+    const parity = match[3]
+    for (let w = start; w <= end; w += 1) {
+      if (parity === '单' && w % 2 === 0) continue
+      if (parity === '双' && w % 2 === 1) continue
+      weeks.add(w)
     }
   })
-  return result
+  return weeks
+}
+
+function getDayLocations(time, location, day) {
+  return parseTimeLocation(time, location).filter(
+    (x) => x.time.substring(0, 3) === dayName[day - 1]
+  )
+}
+
+function getPeriodLocations(dayLocations, startBlock, endBlock) {
+  return dayLocations.flatMap(({ time, location }) => {
+    const periods = time.match(/第(\d+)(?:-(\d+))?节/)
+    if (!periods) return []
+    const start = Number(periods[1])
+    const end = Number(periods[2] || periods[1])
+    if (start > startBlock || end < endBlock) return []
+
+    const weekSpec = time.match(/\{([^}]+)周\}/)
+    return [
+      {
+        location,
+        weeks: parseWeekSpec(weekSpec ? weekSpec[1] : ''),
+        exactPeriod: start === startBlock && end === endBlock,
+      },
+    ]
+  })
+}
+
+export function parseTimeLocationDay(
+  time,
+  location,
+  day,
+  startBlock,
+  endBlock,
+  weeks
+) {
+  const dayLocations = getDayLocations(time, location, day)
+  if (!dayLocations.length) return '数据解析出错'
+
+  if (startBlock != null && endBlock != null) {
+    const periodLocations = getPeriodLocations(
+      dayLocations,
+      startBlock,
+      endBlock
+    )
+    const weekMatch =
+      weeks &&
+      periodLocations.find((entry) =>
+        weeks.some((week) => entry.weeks.has(week))
+      )
+    if (weekMatch) return weekMatch.location
+    if (periodLocations.length)
+      return periodLocations[periodLocations.length - 1].location
+  }
+
+  return dayLocations[dayLocations.length - 1].location
+}
+
+export function getLessonLocationsByWeek(
+  lesson,
+  startBlock,
+  endBlock,
+  weeks,
+  rowIndex
+) {
+  const dayLocations = getDayLocations(lesson.sksj, lesson.jxdd, lesson.xqj)
+  const periodLocations = getPeriodLocations(dayLocations, startBlock, endBlock)
+  const exactWeeks = periodLocations.filter(
+    (entry) =>
+      entry.weeks.size === weeks.length &&
+      weeks.every((week) => entry.weeks.has(week))
+  )
+  const exactPeriods = exactWeeks.filter((entry) => entry.exactPeriod)
+  const rowMatches = exactPeriods.length ? exactPeriods : exactWeeks
+  // Each row has its own week mask, even when its schedule text lists the entire class.
+  const rowMatch = rowMatches[rowIndex] || rowMatches[0]
+  const fallback =
+    periodLocations[periodLocations.length - 1] ||
+    dayLocations[dayLocations.length - 1]
+
+  return new Map(
+    weeks.map((week) => {
+      const weekMatches = periodLocations.filter((entry) =>
+        entry.weeks.has(week)
+      )
+      const match =
+        rowMatch ||
+        weekMatches.find((entry) => entry.exactPeriod) ||
+        weekMatches[0] ||
+        fallback
+      return [week, match ? match.location : '数据解析出错']
+    })
+  )
 }
 
 export function TimeLocation(props) {

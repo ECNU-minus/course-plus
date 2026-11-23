@@ -28,6 +28,7 @@ dist
 .cache
 .parcel-cache
 __pycache__
+.vscode
 
 # data
 public/course-plus-data
