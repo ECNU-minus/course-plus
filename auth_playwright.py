@@ -24,8 +24,8 @@ def fetch_session(debug: bool = False) -> tuple[str, str]:
         page = context.new_page()
 
         try:
-            page.goto(BYYT_ENTRY_URL, wait_until="domcontentloaded", timeout=30000)
-            page.wait_for_url(re.compile(r"(sso|byyt)\.ecnu\.edu\.cn"), timeout=30000)
+            page.goto(BYYT_ENTRY_URL, wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_url(re.compile(r"(sso|byyt)\.ecnu\.edu\.cn"), timeout=60000)
 
             if "sso.ecnu.edu.cn" in page.url:
                 user_input = page.get_by_role("textbox", name="学工号 username")
@@ -36,13 +36,14 @@ def fetch_session(debug: bool = False) -> tuple[str, str]:
                 pwd_input.press("Enter")
 
                 # 等待 SSO 登录完成并跳回 byyt 域名
-                page.wait_for_url("https://byyt.ecnu.edu.cn/**", timeout=30000)
-                page.wait_for_load_state("domcontentloaded")
+                page.wait_for_url("https://byyt.ecnu.edu.cn/**", timeout=60000)
+                page.wait_for_load_state("commit")
 
-            # 手动跳转到 lesson-search/，触发自动重定向到 index/六位数字
-            page.goto(BYYT_ENTRY_URL, wait_until="domcontentloaded", timeout=30000)
+            # 如果还没自动落到 index/六位数字，再手动跳转；用 commit 避免苦等海外静态资源加载
+            if not re.search(r"lesson-search/index/\d{6}", page.url):
+                page.goto(BYYT_ENTRY_URL, wait_until="commit", timeout=60000)
 
-            page.wait_for_url(re.compile(r"lesson-search/index/\d{6}"), timeout=30000)
+            page.wait_for_url(re.compile(r"lesson-search/index/\d{6}"), timeout=60000)
 
             # 提取 index/ 后的 6 位 STU_ID
             stu_id_match = re.search(r"index/(\d{6})", page.url)
@@ -58,18 +59,20 @@ def fetch_session(debug: bool = False) -> tuple[str, str]:
                     break
 
             if not session_id:
-                raise RuntimeError("登录跳转成功，但未在 Cookie 中找到 UUID 格式的 SESSION")
+                raise RuntimeError(f"登录跳转成功，但未在 Cookie 中找到 UUID 格式的 SESSION，当前 URL: {page.url}")
 
             return session_id, stu_id
 
         except Exception as e:
-            page.screenshot(path="login_error.png", full_page=True)
+            current_url = page.url
+            try:
+                page.screenshot(path="login_error.png", full_page=True, timeout=10000)
+            except Exception:
+                pass
             if debug:
-                print(f"调试模式捕获异常: {e}，按回车键关闭浏览器...")
+                print(f"调试模式捕获异常: {e}（URL: {current_url}），按回车键关闭浏览器...")
                 input()
-            raise RuntimeError(f"Playwright 自动登录失败: {e}")
-        finally:
-            browser.close()
+            raise RuntimeError(f"Playwright 自动登录失败（当前 URL: {current_url}）: {e}")
 
 
 if __name__ == "__main__":
