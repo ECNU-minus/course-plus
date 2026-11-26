@@ -8,11 +8,15 @@ on:
     branches:
       - data
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
   pages: write
   id-token: write
+
+env:
+  TZ: Asia/Shanghai
 
 concurrency:
   group: "pages"
@@ -44,7 +48,7 @@ jobs:
         run: |
           rm -rf course-plus-data/.git course-plus-data/.github
           rm -rf .git
-          rm course-plus-data/fetcher.py course-plus-data/parser.py
+          rm -f course-plus-data/fetcher.py course-plus-data/parser.py course-plus-data/auth_playwright.py
           git init
           git add .
           git commit -m "⏱️ $(date +"%Y年%m月%d日-%H时%M分") GitHub Actions定时更新"
