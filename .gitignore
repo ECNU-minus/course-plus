@@ -21,6 +21,8 @@ __pycache__/
 .env.development.local
 .env.test.local
 .env.production.local
+login_error.png
+auth.json
 
 npm-debug.log*
 yarn-debug.log*
