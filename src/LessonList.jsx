@@ -32,9 +32,10 @@ const tableHeader = [
   '课程',
   '学时/学分',
   '上课时间地点',
-  '备注',
   // '年级',
+  '人数上限',
   '教学组成',
+  '备注',
 ]
 
 function DataLoaded({ loaded, size }) {

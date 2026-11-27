@@ -123,6 +123,7 @@ export default function LessonDetail({ lesson, color }) {
             <span className='mr-1'>{lesson.zhxs}</span>
             <span className='mr-1'>{lesson.rwzxs} 学时</span>
             <span className='mr-1'>{lesson.kcxzmc}</span>
+            <span className='mr-1'>上限人数 {lesson.limit}</span>
           </p>
           {lesson.xkbz ? (
             <p className='card-text'>备注：{lesson.xkbz}</p>

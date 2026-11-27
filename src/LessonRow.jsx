@@ -175,11 +175,12 @@ export default function LessonRow({
       <td className='sksj'>
         <TimeLocation time={lesson.sksj} location={lesson.jxdd}></TimeLocation>
       </td>
-      <td className='bz'>{lesson.xkbz}</td>
+      <td className='limit'>{lesson.limit}</td>
       {/* <td className='nj'>{lesson.nj}</td> */}
       <td className='jxbzc'>
         <BreakLine data={lesson.jxbzc} sep=';'></BreakLine>
       </td>
+      <td className='bz'>{lesson.xkbz}</td>
     </tr>
   )
 }
