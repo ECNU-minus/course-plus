@@ -1,0 +1,147 @@
+name: Auto Fetch Course Data
+
+on:
+  schedule:
+    # 每天北京时间凌晨 3:00 自动运行（UTC 19:00）
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+    inputs:
+      year:
+        description: '学期年份（如 2026；留空则默认取最新学期）'
+        required: false
+        default: ''
+      seme:
+        description: '具体学期（auto=默认取最新学期）'
+        type: choice
+        required: false
+        default: 'auto'
+        options:
+          - auto
+          - spring
+          - summer
+          - autumn
+      grade:
+        description: '抓取范围（both=本科+研究生）'
+        type: choice
+        required: true
+        default: 'both'
+        options:
+          - both
+          - under
+          - post
+      seme_id:
+        description: '学期 ID（已有学期留空自动读取；新学期或覆盖时必填）'
+        required: false
+        default: ''
+      first_day:
+        description: '学期第一天 YYYY-MM-DD（已有学期留空自动读取；新学期必填）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  fetch-and-parse:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.git_push.outputs.has_changes }}
+
+    steps:
+      - name: Checkout data branch
+        uses: actions/checkout@v4
+        with:
+          ref: data
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies & Chromium
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: 1. Playwright Auto Login
+        env:
+          ECNU_USERNAME: ${{ secrets.ECNU_USERNAME }}
+          ECNU_PASSWORD: ${{ secrets.ECNU_PASSWORD }}
+        run: python auth_playwright.py
+
+      - name: 2. Fetch & Parse Data
+        env:
+          YEAR: ${{ inputs.year || '' }}
+          SEME: ${{ inputs.seme || '' }}
+          GRADE: ${{ inputs.grade || 'both' }}
+          SEME_ID: ${{ inputs.seme_id || '' }}
+          FIRST_DAY: ${{ inputs.first_day || '' }}
+        run: |
+          ARGS=()
+          if [ -n "$YEAR" ]; then
+            ARGS+=(--year "$YEAR")
+          fi
+          if [ -n "$SEME" ] && [ "$SEME" != "auto" ]; then
+            ARGS+=(--seme "$SEME")
+          fi
+          if [ -n "$SEME_ID" ]; then
+            ARGS+=(--seme-id "$SEME_ID")
+          fi
+          if [ -n "$FIRST_DAY" ]; then
+            ARGS+=(--first-day "$FIRST_DAY")
+          fi
+
+          if [ "$GRADE" = "both" ] || [ "$GRADE" = "under" ]; then
+            python fetcher.py --grade under "${ARGS[@]}"
+          fi
+          if [ "$GRADE" = "both" ] || [ "$GRADE" = "post" ]; then
+            python fetcher.py --grade post "${ARGS[@]}"
+          fi
+
+      - name: Upload login error screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: login-error-screenshot
+          path: login_error.png
+          if-no-files-found: ignore
+
+      - name: 3. Commit and Push to data branch
+        id: git_push
+        env:
+          YEAR: ${{ inputs.year || '' }}
+          SEME: ${{ inputs.seme || '' }}
+          GRADE: ${{ inputs.grade || 'both' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add LessonData/ lessonData_index.json
+          if ! git diff --staged --quiet; then
+            if [ -n "$YEAR" ] && [ -n "$SEME" ] && [ "$SEME" != "auto" ]; then
+              TARGET="${YEAR}_${SEME}"
+            else
+              TARGET="latest"
+            fi
+            git commit -m "chore(data): update ${TARGET} (${GRADE}) $(date +'%Y-%m-%d')"
+            git push
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No data changes detected."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+  deploy-gh-pages:
+    needs: fetch-and-parse
+    if: needs.fetch-and-parse.outputs.has_changes == 'true'
+    uses: ECNU-minus/course-plus/.github/workflows/update-data.yml@data
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
