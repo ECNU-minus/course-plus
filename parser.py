@@ -187,7 +187,7 @@ def extract_code(lesson_data: dict[str, Any]) -> str:
     return lesson_data['course']['code']
 
 def extract_limit(lesson_data: dict[str, Any]) -> int:
-    return lesson_data['course']['limitCount']
+    return lesson_data['limitCount']
 
 def extract_name(lesson_data: dict[str, Any]) -> str:
     return lesson_data['course']['nameZh']
