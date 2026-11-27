@@ -186,6 +186,9 @@ def extract_time(lesson_data: dict[str, Any]) -> list[tuple[list[tuple[str, str,
 def extract_code(lesson_data: dict[str, Any]) -> str:
     return lesson_data['course']['code']
 
+def extract_limit(lesson_data: dict[str, Any]) -> int:
+    return lesson_data['course']['limitCount']
+
 def extract_name(lesson_data: dict[str, Any]) -> str:
     return lesson_data['course']['nameZh']
 
@@ -342,6 +345,7 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
             "row_id": idx, # This might need to be unique across splits
             "kzmc": extract_gen_type(lesson_data),
             "jxdd": list_jxdd[0] if list_jxdd else "",
+            "limit": extract_limit(lesson_data)
         }
         return [res]
 
@@ -379,6 +383,7 @@ def parse_single(lesson_data: dict[str, Any], year: str, semester: int, idx: int
                 "row_id": f"{idx}_{i}", # 为拆分产生的记录生成唯一 row_id
                 "kzmc": extract_gen_type(lesson_data),
                 "jxdd": list_jxdd[i], # 保留完整字符串用于展示
+                "limit": extract_limit(lesson_data)
             }
             res_list.append(res)
             

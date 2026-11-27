@@ -112,6 +112,7 @@ export function parseLessons(
       xq: semesterCode,
       nj: [...years].join(',') || '无年级',
       kzmc: lesson.courseType?.nameZh ?? '',
+      limit: lesson.limitCount ,
     }
 
     const shared: TimeBlock[] = []

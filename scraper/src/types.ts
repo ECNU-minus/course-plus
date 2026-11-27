@@ -14,6 +14,7 @@ export interface RawLesson {
   scheduleText?: {
     dateTimePlacePersonText?: { textZh: string | null } | null
   } | null
+  limitCount: number | null
 }
 
 export interface ParsedLesson {
@@ -41,6 +42,7 @@ export interface ParsedLesson {
   row_id: string
   kzmc: string
   jxdd: string
+  limit: number
 }
 
 export interface SemesterIndexEntry {
